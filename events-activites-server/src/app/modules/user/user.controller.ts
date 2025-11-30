@@ -7,8 +7,7 @@ import sendResponse from "../../shared/sendResponse";
 
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
-    const payload = req.body;
-    const result = await UserService.createUser(payload);
+    const result = await UserService.createUser(req);
 
     sendResponse(res, {
         statusCode: 201,

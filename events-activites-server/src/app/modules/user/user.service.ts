@@ -1,31 +1,74 @@
 import { prisma } from "../../shared/prisma";
 import bcrypt from "bcrypt";
-import { IUserCreateInput } from "./user.interface";
-// import { fileUploader } from "../../helper/fileUploader";
+import config from "../../../config";
+import AppError from "../../errorHandler/AppError";
+import httpStatus from "http-status";
+import { Request } from "express";
+import { fileUploader } from "../../helpers/fileUploader";
+import fs from 'fs';
 
-const createUser = async (data: IUserCreateInput) => {
+const createUser = async (req: Request) => {
+    try {
+        // Upload file to Cloudinary if provided
+        if (req.file) {
+            const uploadResult = await fileUploader.uploadToCloudinary(req.file);
+            
+            if (uploadResult && uploadResult.secure_url) {
+                req.body.profileImage = uploadResult.secure_url;
+            }
 
-    const { email, password, role = "USER" } = data;
+            // Delete local file after upload
+            if (fs.existsSync(req.file.path)) {
+                fs.unlinkSync(req.file.path);
+            }
+        }
 
-    // check existing user
-    const exists = await prisma.user.findUnique({ where: { email } });
-    if (exists) throw new Error("User already exists");
+        // Check if user already exists
+        const exists = await prisma.user.findUnique({ where: { email: req.body?.email } });
+        if (exists) {
+            throw new AppError(httpStatus.CONFLICT, "User already exists");
+        }
 
-    const hashed = await bcrypt.hash(password, 10);
+        // Prevent admin creation through this endpoint
+        if (req.body?.role === "ADMIN") {
+            throw new AppError(httpStatus.FORBIDDEN, "You're not authorized to create admin.");
+        }
 
-    const user = await prisma.user.create({
-        data: {
-            email,
-            password: hashed,
-            fullName: data.fullName,
-            profileImage: data.profileImage,
-            interests: data.interests ?? [],
-            city: data.city,
-            role,
-        },
-    });
+        // Hash password
+        const hashedPassword = await bcrypt.hash(req.body?.password, Number(config.bcrypt_salt_rounds) || 10);
 
-    return user;
+        // Create user
+        const result = await prisma.user.create({
+            data: {
+                email: req.body.email,
+                password: hashedPassword,
+                fullName: req.body.fullName,
+                profileImage: req.body.profileImage,
+                interests: req.body.interests || [],
+                city: req.body.city,
+                role: req.body.role || "USER",
+            },
+            select: {
+                id: true,
+                email: true,
+                fullName: true,
+                profileImage: true,
+                interests: true,
+                city: true,
+                role: true,
+                createdAt: true,
+            }
+        });
+
+        return result;
+    } catch (error) {
+        // Clean up file if it exists
+        if (req.file && fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+        }
+        
+        throw error;
+    }
 }
 
 export const UserService = {
