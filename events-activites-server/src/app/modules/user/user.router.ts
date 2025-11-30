@@ -5,6 +5,10 @@ import { UserValidation } from "./user.validation";
 
 const router = Router();
 
+router.get("/", UserController.getAllUsers)
+
+router.get('/my-profile', UserController.getMyProfile)
+
 // user registration
 router.post("/register",
     fileUploader.upload.single('file'),
@@ -13,6 +17,5 @@ router.post("/register",
         return UserController.createUser(req, res, next)
     })
 
-router.get("/", UserController.getAllUsers)
 
 export const userRoutes = router;

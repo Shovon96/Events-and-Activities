@@ -7,7 +7,8 @@ import { Request } from "express";
 import { fileUploader } from "../../helpers/fileUploader";
 import fs from 'fs';
 import { IOptions, paginationHelper } from "../../helpers/paginationHelper";
-import { Prisma } from "@prisma/client";
+import { Prisma, UserRole, UserStatus } from "@prisma/client";
+import { IJWTPayload } from "../../types/common";
 
 const createUser = async (req: Request) => {
     try {
@@ -128,7 +129,47 @@ const getAllUsers = async (params: any, options: IOptions) => {
     };
 }
 
+const getMyProfile = async (user: IJWTPayload) => {
+    console.log(user)
+    const userInfo = await prisma.user.findUnique({
+        where: {
+            email: user?.email,
+            // status: UserStatus.ACTIVE
+        },
+        select: {
+            id: true,
+            email: true,
+            fullName: true,
+            interests: true,
+            role: true,
+            status: true
+        }
+    })
+
+    if (!userInfo) {
+        throw new AppError(httpStatus.NOT_FOUND, "User not found!");
+    }
+
+    let profileData;
+
+    if (userInfo.role === UserRole.USER) {
+        profileData = await prisma.user.findUnique({
+            where: {
+                email: userInfo.email
+            }
+        })
+    }
+
+    return {
+        ...userInfo,
+        ...profileData
+    };
+
+};
+
+
 export const UserService = {
     createUser,
-    getAllUsers
+    getAllUsers,
+    getMyProfile
 }
