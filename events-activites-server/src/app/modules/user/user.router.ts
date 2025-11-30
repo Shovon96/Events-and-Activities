@@ -13,6 +13,6 @@ router.post("/register",
         return UserController.createUser(req, res, next)
     })
 
-router.get("/", UserController.getUsers)
+router.get("/", UserController.getAllUsers)
 
 export const userRoutes = router;

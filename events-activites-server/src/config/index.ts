@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
+import { jwt } from 'zod';
 
 dotenv.config({ path: path.join(process.cwd(), '.env') });
 
@@ -8,6 +9,12 @@ export default {
     port: process.env.PORT,
     database_url: process.env.DATABASE_URL,
     bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS,
+    jwt: {
+        jwt_secret: process.env.JWT_SECRET,
+        refresh_secret: process.env.JWT_REFRESH_SECRET,
+        access_expires_in: process.env.ACCESSTOKEN_EXPIRES_IN,
+        refresh_expires_in: process.env.REFRESHTOKEN_EXPIRES_IN
+    },
     cloudinary: {
         cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
         api_key: process.env.CLOUDINARY_API_KEY,
