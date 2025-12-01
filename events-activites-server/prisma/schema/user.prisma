@@ -28,11 +28,12 @@ model Event {
     description     String?
     image           String?
     location        String
-    dateTime        DateTime
+    startDate       DateTime
+    endDate         DateTime
     minParticipants Int?
     maxParticipants Int?
     status          EventStatus @default(OPEN)
-    joiningFee      Float?      @default(0)
+    ticketPrice      Float?      @default(0)
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
 

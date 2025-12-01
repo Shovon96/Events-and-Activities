@@ -46,8 +46,24 @@ const uploadToCloudinary = async (file: Express.Multer.File) => {
     }
 }
 
+const deleteFromCloudinary = async (publicId: string) => {
+    try {
+        cloudinary.config({
+            cloud_name: config.cloudinary.cloud_name,
+            api_key: config.cloudinary.api_key,
+            api_secret: config.cloudinary.api_secret
+        });
+
+        const result = await cloudinary.uploader.destroy(publicId);
+        return result;
+    } catch (error) {
+        throw new Error(`Failed to delete from Cloudinary: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+}
+
 export const fileUploader = {
     upload,
-    uploadToCloudinary
+    uploadToCloudinary,
+    deleteFromCloudinary
 }
 

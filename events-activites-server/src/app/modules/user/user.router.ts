@@ -7,9 +7,9 @@ import { UserRole } from "@prisma/client";
 
 const router = Router();
 
-router.get("/", UserController.getAllUsers)
+router.get("/", CheckAuth(UserRole.ADMIN), UserController.getAllUsers)
 
-router.get('/my-profile', CheckAuth(UserRole.USER), UserController.getMyProfile)
+router.get('/my-profile', CheckAuth(UserRole.USER, UserRole.HOST, UserRole.ADMIN), UserController.getMyProfile)
 
 // user registration
 router.post("/register",

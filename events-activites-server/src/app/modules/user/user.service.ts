@@ -33,7 +33,7 @@ const createUser = async (req: Request) => {
         }
 
         // Prevent admin creation through this endpoint
-        if (req.body?.role === "ADMIN") {
+        if (req.body?.role === UserRole.ADMIN) {
             throw new AppError(httpStatus.FORBIDDEN, "You're not authorized to create admin.");
         }
 
