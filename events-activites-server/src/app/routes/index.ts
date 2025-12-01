@@ -2,13 +2,14 @@ import express from 'express';
 import { userRoutes } from '../modules/user/user.router';
 import { authRoutes } from '../modules/auth/auth.router';
 import { eventRoutes } from '../modules/events/event.router';
+import { participantRoutes } from '../modules/participant/participant.router';
 
 
 const router = express.Router();
 
 const moduleRoutes = [
     {
-        path: '/user',
+        path: '/users',
         route: userRoutes
     },
     {
@@ -16,8 +17,12 @@ const moduleRoutes = [
         route: authRoutes
     },
     {
-        path: '/event',
+        path: '/events',
         route: eventRoutes
+    },
+    {
+        path: '/participant',
+        route: participantRoutes
     }
 ];
 
