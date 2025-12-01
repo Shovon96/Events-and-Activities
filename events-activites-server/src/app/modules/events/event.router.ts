@@ -2,13 +2,14 @@ import { NextFunction, Request, Response, Router } from "express";
 import CheckAuth from "../../middlewares/CheckAuth";
 import { UserRole } from "@prisma/client";
 import { eventValidation } from "./event.validation";
-import validateRequest from "../../middlewares/validatedRequest";
 import { EventController } from "./event.controller";
 import { fileUploader } from "../../helpers/fileUploader";
 
 
 const router = Router();
 
+
+router.get("/", CheckAuth(UserRole.USER, UserRole.HOST, UserRole.ADMIN), EventController.getAllEvents);
 
 
 // create event

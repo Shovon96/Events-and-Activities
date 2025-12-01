@@ -7,6 +7,7 @@ import { IJWTPayload } from "../../types/common";
 import { Request } from "express";
 import { fileUploader } from "../../helpers/fileUploader";
 import fs from 'fs';
+import { IOptions, paginationHelper } from "../../helpers/paginationHelper";
 
 const createEvent = async (req: Request, user: IJWTPayload) => {
     let uploadedImageUrl: string | undefined;
@@ -116,8 +117,73 @@ const createEvent = async (req: Request, user: IJWTPayload) => {
     }
 };
 
+const getAllEvents = async (params: any, options: IOptions) => {
+
+    const { page, limit, skip, sortBy, sortOrder } = paginationHelper.calculatePagination(options)
+    const { searchTerm, ...filterData } = params;
+
+    const andConditions: Prisma.EventWhereInput[] = [];
+
+    const eventSearchableFields = ["name", "type", "description", "location"];
+    if (searchTerm) {
+        andConditions.push({
+            OR: eventSearchableFields.map(field => ({
+                [field]: {
+                    contains: searchTerm,
+                    mode: "insensitive"
+                }
+            }))
+        })
+    }
+
+    if (Object.keys(filterData).length > 0) {
+        andConditions.push({
+            AND: Object.keys(filterData).map(key => ({
+                [key]: {
+                    equals: (filterData as any)[key]
+                }
+            }))
+        })
+    }
+
+    const whereConditions: Prisma.EventWhereInput = andConditions.length > 0 ? {
+        AND: andConditions
+    } : {}
+
+    const result = await prisma.event.findMany({
+        skip,
+        take: limit,
+
+        where: whereConditions,
+        orderBy: {
+            [sortBy]: sortOrder
+        },
+        include: {
+            host: {
+                select: {
+                    id: true,
+                    email: true,
+                    fullName: true,
+                    role: true
+                }
+            }
+        },
+    });
+
+    const total = await prisma.event.count({
+        where: whereConditions
+    });
+    return {
+        meta: {
+            page,
+            limit,
+            total
+        },
+        data: result
+    };
+};
 
 export const EventService = {
     createEvent,
-
+    getAllEvents
 };

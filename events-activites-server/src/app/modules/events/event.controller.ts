@@ -4,6 +4,7 @@ import sendResponse from "../../shared/sendResponse";
 import httpStatus from "http-status";
 import { EventService } from "./event.service";
 import { IJWTPayload } from "../../types/common";
+import filterPick from "../../helpers/filterPick";
 
 const createEvent = catchAsync(async (req: Request & { user?: IJWTPayload }, res: Response) => {
     const user = req.user;
@@ -17,7 +18,22 @@ const createEvent = catchAsync(async (req: Request & { user?: IJWTPayload }, res
     });
 });
 
+const getAllEvents = catchAsync(async (req: Request, res: Response) => {
+    const userFilterableFields = ["name", "type", "location", "startDate", "endDate", "searchTerm"];
+    const filters = filterPick(req?.query, userFilterableFields) // searching , filtering
+    const options = filterPick(req.query, ["page", "limit", "sortBy", "sortOrder"]) // pagination and sorting
+
+    const result = await EventService.getAllEvents(filters, options);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Events retrieved successfully!",
+        data: result,
+    });
+});
 
 export const EventController = {
-    createEvent
+    createEvent,
+    getAllEvents
 };
