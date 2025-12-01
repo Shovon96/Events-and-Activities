@@ -117,6 +117,130 @@ const createEvent = async (req: Request, user: IJWTPayload) => {
     }
 };
 
+const updateEvent = async (id: string, req: Request, user: IJWTPayload) => {
+    let uploadedImagePublicId: string | undefined;
+    let localFilePath: string | undefined;
+    let oldImagePublicId: string | undefined;
+
+    try {
+        // Find existing event
+        const event = await prisma.event.findUniqueOrThrow({
+            where: { id },
+        });
+
+        // Verify user
+        const userInfo = await prisma.user.findUniqueOrThrow({
+            where: {
+                email: user?.email,
+                status: UserStatus.ACTIVE
+            }
+        });
+
+        // Host OR Admin Only
+        if (event.hostId !== userInfo.id && userInfo.role !== UserRole.ADMIN) {
+            throw new AppError(httpStatus.FORBIDDEN, "You're not authorized to update this event!");
+        }
+
+        // Extract old image public_id if exists
+        if (event.image) {
+            const urlParts = event.image.split('/');
+            const publicIdWithExt = urlParts.slice(-2).join('/');
+            oldImagePublicId = publicIdWithExt.split('.')[0];
+        }
+
+        // Upload new file to Cloudinary if provided
+        if (req.file) {
+            localFilePath = req.file.path;
+            const uploadResult = await fileUploader.uploadToCloudinary(req.file);
+
+            if (uploadResult && uploadResult.secure_url) {
+                uploadedImagePublicId = uploadResult.public_id;
+                req.body.image = uploadResult.secure_url;
+            }
+
+            // Delete local file after upload
+            if (fs.existsSync(req.file.path)) {
+                fs.unlinkSync(req.file.path);
+                localFilePath = undefined;
+            }
+        }
+
+        const { startDate, endDate, ...payload } = req.body as IEventUpdate;
+
+        // Convert date strings to ISO DateTime format if provided
+        const updateData: any = { ...payload };
+
+        if (startDate) {
+            updateData.startDate = new Date(startDate).toISOString();
+        }
+
+        if (endDate) {
+            updateData.endDate = new Date(endDate).toISOString();
+        }
+
+        // Use transaction to update event
+        const result = await prisma.$transaction(async (tnx) => {
+            const updatedEvent = await tnx.event.update({
+                where: { id },
+                data: updateData,
+                include: {
+                    host: {
+                        select: {
+                            id: true,
+                            email: true,
+                            fullName: true,
+                            profileImage: true
+                        }
+                    }
+                }
+            });
+
+            // Delete old image from Cloudinary if new image was uploaded
+            if (oldImagePublicId && uploadedImagePublicId) {
+                try {
+                    await fileUploader.deleteFromCloudinary(oldImagePublicId);
+                } catch (deleteError) {
+                    console.error('Failed to delete old image from Cloudinary:', deleteError);
+                }
+            }
+
+            return updatedEvent;
+        });
+
+        return result;
+    } catch (error) {
+        // Clean up newly uploaded image if update fails
+        if (uploadedImagePublicId) {
+            try {
+                await fileUploader.deleteFromCloudinary(uploadedImagePublicId);
+            } catch (deleteError) {
+                console.error('Failed to delete image from Cloudinary:', deleteError);
+            }
+        }
+
+        // Clean up local file if it still exists
+        if (localFilePath && fs.existsSync(localFilePath)) {
+            fs.unlinkSync(localFilePath);
+        }
+
+        throw error;
+    }
+};
+
+// const deleteEvent = async (id: string, user: any) => {
+//     const event = await prisma.event.findUniqueOrThrow({
+//         where: { id },
+//     });
+
+//     // Host OR Admin
+//     if (event.hostId !== user.id && user.role !== "ADMIN") {
+//         throw new AppError(httpStatus.FORBIDDEN, "Access denied!");
+//     }
+
+//     return prisma.event.delete({
+//         where: { id },
+//     });
+// };
 
 const getSingleEvent = async (id: string) => {
     return prisma.event.findUniqueOrThrow({
@@ -206,6 +330,6 @@ export const EventService = {
     createEvent,
     getAllEvents,
     getSingleEvent,
-    // updateEvent,
+    updateEvent,
     // deleteEvent,
 };
