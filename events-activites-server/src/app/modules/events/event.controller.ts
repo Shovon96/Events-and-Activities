@@ -31,17 +31,17 @@ const updateEvent = catchAsync(async (req: Request & { user?: IJWTPayload }, res
     });
 });
 
-// const deleteEvent = catchAsync(async (req: Request, res: Response) => {
-//     const id = req.params.id;
-//     await EventService.deleteEvent(id, req.user);
+const deleteEvent = catchAsync(async (req: Request & { user?: IJWTPayload }, res: Response) => {
+    const id = req.params.id;
+    await EventService.deleteEvent(id, req.user as IJWTPayload);
 
-//     sendResponse(res, {
-//         statusCode: httpStatus.OK,
-//         success: true,
-//         message: "Event deleted successfully!",
-//         data: null
-//     });
-// });
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Event deleted successfully!",
+        data: null
+    });
+});
 
 const getSingleEvent = catchAsync(async (req: Request, res: Response) => {
     const id = req.params.id;
@@ -75,5 +75,5 @@ export const EventController = {
     getAllEvents,
     getSingleEvent,
     updateEvent,
-    // deleteEvent,
+    deleteEvent,
 };

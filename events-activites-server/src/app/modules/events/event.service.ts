@@ -1,4 +1,4 @@
-import { EventStatus, Prisma, UserRole, UserStatus } from "@prisma/client";
+import { Prisma, UserRole, UserStatus } from "@prisma/client";
 import { prisma } from "../../shared/prisma";
 import AppError from "../../errorHandler/AppError";
 import httpStatus from "http-status";
@@ -227,20 +227,28 @@ const updateEvent = async (id: string, req: Request, user: IJWTPayload) => {
     }
 };
 
-// const deleteEvent = async (id: string, user: any) => {
-//     const event = await prisma.event.findUniqueOrThrow({
-//         where: { id },
-//     });
+const deleteEvent = async (id: string, user: IJWTPayload) => {
+    const event = await prisma.event.findUniqueOrThrow({
+        where: { id },
+    });
 
-//     // Host OR Admin
-//     if (event.hostId !== user.id && user.role !== "ADMIN") {
-//         throw new AppError(httpStatus.FORBIDDEN, "Access denied!");
-//     }
+    // Verify user
+    const userInfo = await prisma.user.findUniqueOrThrow({
+        where: {
+            email: user?.email,
+            status: UserStatus.ACTIVE
+        }
+    });
 
-//     return prisma.event.delete({
-//         where: { id },
-//     });
-// };
+    // Host OR Admin Only
+    if (event.hostId !== userInfo.id && userInfo.role !== UserRole.ADMIN) {
+        throw new AppError(httpStatus.FORBIDDEN, "You're not authorized to update this event!");
+    }
+
+    return prisma.event.delete({
+        where: { id },
+    });
+};
 
 const getSingleEvent = async (id: string) => {
     return prisma.event.findUniqueOrThrow({
@@ -331,5 +339,5 @@ export const EventService = {
     getAllEvents,
     getSingleEvent,
     updateEvent,
-    // deleteEvent,
+    deleteEvent,
 };

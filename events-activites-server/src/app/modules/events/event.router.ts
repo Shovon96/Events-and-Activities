@@ -4,7 +4,6 @@ import { UserRole } from "@prisma/client";
 import { eventValidation } from "./event.validation";
 import { EventController } from "./event.controller";
 import { fileUploader } from "../../helpers/fileUploader";
-import validateRequest from "../../middlewares/validatedRequest";
 
 
 const router = Router();
@@ -34,10 +33,10 @@ router.patch("/:id",
         return EventController.updateEvent(req, res, next)
     });
 
-// router.delete(
-//     "/:id",
-//     CheckAuth(UserRole.HOST, UserRole.ADMIN),
-//     EventController.deleteEvent
-// );
+router.delete(
+    "/:id",
+    CheckAuth(UserRole.HOST, UserRole.ADMIN),
+    EventController.deleteEvent
+);
 
 export const eventRoutes = router;
