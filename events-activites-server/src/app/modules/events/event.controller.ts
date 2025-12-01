@@ -18,6 +18,20 @@ const createEvent = catchAsync(async (req: Request & { user?: IJWTPayload }, res
     });
 });
 
+
+
+const getSingleEvent = catchAsync(async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const result = await EventService.getSingleEvent(id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Event retrieved successfully!",
+        data: result,
+    });
+});
+
 const getAllEvents = catchAsync(async (req: Request, res: Response) => {
     const userFilterableFields = ["name", "type", "location", "startDate", "endDate", "searchTerm"];
     const filters = filterPick(req?.query, userFilterableFields) // searching , filtering
@@ -35,5 +49,8 @@ const getAllEvents = catchAsync(async (req: Request, res: Response) => {
 
 export const EventController = {
     createEvent,
-    getAllEvents
+    getAllEvents,
+    getSingleEvent,
+    // updateEvent,
+    // deleteEvent,
 };

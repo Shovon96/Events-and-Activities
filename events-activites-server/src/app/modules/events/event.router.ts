@@ -9,8 +9,9 @@ import { fileUploader } from "../../helpers/fileUploader";
 const router = Router();
 
 
-router.get("/", CheckAuth(UserRole.USER, UserRole.HOST, UserRole.ADMIN), EventController.getAllEvents);
+router.get("/", EventController.getAllEvents);
 
+router.get("/:id", EventController.getSingleEvent);
 
 // create event
 router.post("/create-event",
@@ -20,6 +21,7 @@ router.post("/create-event",
         req.body = eventValidation.createEventValidation.parse(JSON.parse(req.body.data))
         return EventController.createEvent(req, res, next)
     })
+
 
 
 export const eventRoutes = router;

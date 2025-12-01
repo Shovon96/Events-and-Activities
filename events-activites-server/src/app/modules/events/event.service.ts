@@ -117,6 +117,25 @@ const createEvent = async (req: Request, user: IJWTPayload) => {
     }
 };
 
+
+const getSingleEvent = async (id: string) => {
+    return prisma.event.findUniqueOrThrow({
+        where: { id },
+        include: {
+            host: {
+                select: {
+                    id: true,
+                    email: true,
+                    fullName: true,
+                    role: true,
+                }
+            },
+            participants: true,
+            reviews: true,
+        },
+    });
+};
+
 const getAllEvents = async (params: any, options: IOptions) => {
 
     const { page, limit, skip, sortBy, sortOrder } = paginationHelper.calculatePagination(options)
@@ -185,5 +204,8 @@ const getAllEvents = async (params: any, options: IOptions) => {
 
 export const EventService = {
     createEvent,
-    getAllEvents
+    getAllEvents,
+    getSingleEvent,
+    // updateEvent,
+    // deleteEvent,
 };
