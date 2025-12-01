@@ -2,12 +2,14 @@ import { NextFunction, Request, Response, Router } from "express";
 import { UserController } from "./user.controller";
 import { fileUploader } from "../../helpers/fileUploader";
 import { UserValidation } from "./user.validation";
+import CheckAuth from "../../middlewares/CheckAuth";
+import { UserRole } from "@prisma/client";
 
 const router = Router();
 
 router.get("/", UserController.getAllUsers)
 
-router.get('/my-profile', UserController.getMyProfile)
+router.get('/my-profile', CheckAuth(UserRole.USER), UserController.getMyProfile)
 
 // user registration
 router.post("/register",

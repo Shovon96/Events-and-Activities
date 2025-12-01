@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import path from 'path';
-import { jwt } from 'zod';
 
 dotenv.config({ path: path.join(process.cwd(), '.env') });
 

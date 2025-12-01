@@ -130,11 +130,11 @@ const getAllUsers = async (params: any, options: IOptions) => {
 }
 
 const getMyProfile = async (user: IJWTPayload) => {
-    console.log(user)
+    
     const userInfo = await prisma.user.findUnique({
         where: {
             email: user?.email,
-            // status: UserStatus.ACTIVE
+            status: UserStatus.ACTIVE
         },
         select: {
             id: true,
