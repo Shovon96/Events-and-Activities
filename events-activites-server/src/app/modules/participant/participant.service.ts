@@ -97,6 +97,37 @@ const joinEvent = async (eventId: string, user: IJWTPayload) => {
 }
 
 
+const getMyJoinedEvents = async (user: IJWTPayload) => {
+    // Verify user
+    const userInfo = await prisma.user.findUniqueOrThrow({
+        where: {
+            email: user?.email,
+            status: UserStatus.ACTIVE
+        }
+    });
+
+    return prisma.participant.findMany({
+        where: { userId: userInfo.id },
+        include: {
+            event: {
+                include: {
+                    host: {
+                        select: {
+                            id: true,
+                            email: true,
+                            fullName: true,
+                            profileImage: true
+                        }
+                    },
+                    participants: true
+                }
+            }
+        },
+        orderBy: { createdAt: "desc" },
+    });
+}
+
 export const ParticipantService = {
-    joinEvent
+    joinEvent,
+    getMyJoinedEvents
 }

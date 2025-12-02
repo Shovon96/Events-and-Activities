@@ -5,6 +5,12 @@ import { UserRole } from "@prisma/client";
 
 const router = express.Router();
 
+// Get my joined events
+router.get(
+    "/my-events",
+    CheckAuth(UserRole.USER, UserRole.HOST, UserRole.ADMIN),
+    ParticipantController.getMyJoinedEvents
+);
 
 
 // Join an event

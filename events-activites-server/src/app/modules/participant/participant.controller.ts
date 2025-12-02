@@ -19,6 +19,19 @@ const joinEvent = catchAsync(async (req: Request & { user?: IJWTPayload }, res: 
 })
 
 
+const getMyJoinedEvents = catchAsync(async (req: Request & { user?: IJWTPayload }, res: Response) => {
+    const user = req.user;
+    const result = await ParticipantService.getMyJoinedEvents(user as IJWTPayload);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Your joined events fetched successfully!",
+        data: result,
+    });
+})
+
 export const ParticipantController = {
-    joinEvent
+    joinEvent,
+    getMyJoinedEvents
 }
