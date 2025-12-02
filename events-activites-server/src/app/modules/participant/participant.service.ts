@@ -1,8 +1,9 @@
-import { EventStatus, UserRole, UserStatus } from "@prisma/client";
+import { EventStatus, Prisma, UserRole, UserStatus } from "@prisma/client";
 import { prisma } from "../../shared/prisma";
 import AppError from "../../errorHandler/AppError";
 import httpStatus from "http-status";
 import { IJWTPayload } from "../../types/common";
+import { IOptions, paginationHelper } from "../../helpers/paginationHelper";
 
 const joinEvent = async (eventId: string, user: IJWTPayload) => {
     // Verify user exists and is active
@@ -96,6 +97,89 @@ const joinEvent = async (eventId: string, user: IJWTPayload) => {
     return result;
 }
 
+const partcipantListByEvent = async (eventId: string, params: any, options: IOptions) => {
+
+    const { page, limit, skip, sortBy, sortOrder } = paginationHelper.calculatePagination(options)
+    const { searchTerm, ...filterData } = params;
+
+    // Verify event exists
+    await prisma.event.findUniqueOrThrow({
+        where: { id: eventId }
+    });
+
+    const andConditions: Prisma.ParticipantWhereInput[] = [];
+
+    // Always restrict to the specific event
+    andConditions.push({ eventId });
+
+    // Search on related user fields
+    if (searchTerm) {
+        andConditions.push({
+            OR: [
+                { user: { fullName: { contains: searchTerm, mode: 'insensitive' } } },
+                { user: { email: { contains: searchTerm, mode: 'insensitive' } } },
+                { user: { city: { contains: searchTerm, mode: 'insensitive' } } },
+            ]
+        });
+    }
+
+    // Filter on related user fields
+    if (Object.keys(filterData).length > 0) {
+        const filterConditions: Prisma.ParticipantWhereInput[] = [];
+        for (const key of Object.keys(filterData)) {
+            const value = (filterData as any)[key];
+            if (key === 'name') {
+                filterConditions.push({ user: { fullName: { equals: value } } });
+            } else if (key === 'email') {
+                filterConditions.push({ user: { email: { equals: value } } });
+            } else if (key === 'city') {
+                filterConditions.push({ user: { city: { equals: value } } });
+            } else {
+                // fallback to participant fields
+                filterConditions.push({ [key]: { equals: value } } as any);
+            }
+        }
+        if (filterConditions.length > 0) {
+            andConditions.push({ AND: filterConditions });
+        }
+    }
+
+    const whereConditions: Prisma.ParticipantWhereInput = { AND: andConditions };
+
+    const result = await prisma.participant.findMany({
+        skip,
+        take: limit,
+
+        where: whereConditions,
+        orderBy: {
+            [sortBy]: sortOrder
+        },
+        include: {
+            user: {
+                select: {
+                    id: true,
+                    email: true,
+                    fullName: true,
+                    profileImage: true,
+                    city: true,
+                    interests: true
+                }
+            }
+        },
+    });
+
+    const total = await prisma.participant.count({
+        where: whereConditions
+    });
+    return {
+        meta: {
+            page,
+            limit,
+            total
+        },
+        data: result
+    };
+}
 
 const getMyJoinedEvents = async (user: IJWTPayload) => {
     // Verify user
@@ -129,5 +213,6 @@ const getMyJoinedEvents = async (user: IJWTPayload) => {
 
 export const ParticipantService = {
     joinEvent,
+    partcipantListByEvent,
     getMyJoinedEvents
 }

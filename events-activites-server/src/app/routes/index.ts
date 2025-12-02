@@ -21,7 +21,7 @@ const moduleRoutes = [
         route: eventRoutes
     },
     {
-        path: '/participant',
+        path: '/participants',
         route: participantRoutes
     }
 ];

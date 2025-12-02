@@ -12,6 +12,11 @@ router.get(
     ParticipantController.getMyJoinedEvents
 );
 
+// Get participants by event
+router.get(
+    "/event/:eventId",
+    ParticipantController.partcipantListByEvent
+);
 
 // Join an event
 router.post(
