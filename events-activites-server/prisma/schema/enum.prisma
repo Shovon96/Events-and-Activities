@@ -18,7 +18,9 @@ enum EventStatus {
 }
 
 enum PaymentStatus {
-    PENDING
     PAID
+    UNPAID
+    CANCELLED
+    FAILED
     REFUNDED
 }

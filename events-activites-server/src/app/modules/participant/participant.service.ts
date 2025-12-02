@@ -4,6 +4,9 @@ import AppError from "../../errorHandler/AppError";
 import httpStatus from "http-status";
 import { IJWTPayload } from "../../types/common";
 import { IOptions, paginationHelper } from "../../helpers/paginationHelper";
+import { v4 as uuidv4 } from 'uuid';
+import { stripe } from "../../helpers/stripe";
+import config from "../../../config";
 
 const joinEvent = async (eventId: string, user: IJWTPayload) => {
     // Verify user exists and is active
@@ -53,8 +56,8 @@ const joinEvent = async (eventId: string, user: IJWTPayload) => {
     }
 
     // Use transaction to join event and update status if needed
-    const result = await prisma.$transaction(async (tx) => {
-        const participant = await tx.participant.create({
+    const result = await prisma.$transaction(async (tnx) => {
+        const participant = await tnx.participant.create({
             data: {
                 userId: userInfo.id,
                 eventId: eventId
@@ -82,16 +85,60 @@ const joinEvent = async (eventId: string, user: IJWTPayload) => {
             }
         });
 
+        const transactionId = uuidv4();
+
+        const paymentData = await tnx.payment.create({
+            data: {
+                userId: userInfo.id,
+                eventId,
+                amount: event.ticketPrice as number,
+                transactionId
+            }
+        })
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            mode: "payment",
+            customer_email: user.email,
+            line_items: [
+                {
+                    price_data: {
+                        currency: "bdt",
+                        product_data: {
+                            name: `Event In ${event.name}`,
+                        },
+                        unit_amount: (event.ticketPrice as number) * 100,
+                    },
+                    quantity: 1,
+                },
+            ],
+            metadata: {
+                eventId: event.id,
+                userId: userInfo.id,  // Added userId to metadata
+                paymentId: paymentData.id
+            },
+            success_url: config.stripe_success_url,
+            cancel_url: config.stripe_cancel_url
+        });
+        
+        console.log('💳 Stripe session created:', {
+            sessionId: session.id,
+            paymentUrl: session.url,
+            metadata: session.metadata
+        });
         // Update event status to FULL if max participants reached
         const updatedParticipantCount = event.participants.length + 1;
         if (event.maxParticipants && updatedParticipantCount >= event.maxParticipants) {
-            await tx.event.update({
+            await tnx.event.update({
                 where: { id: eventId },
                 data: { status: EventStatus.FULL }
             });
         }
 
-        return participant;
+        return {
+            paymentUrl: session.url,
+            participant: participant
+        }
     });
 
     return result;

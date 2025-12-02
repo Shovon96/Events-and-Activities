@@ -32,8 +32,9 @@ model Event {
     endDate         DateTime
     minParticipants Int?
     maxParticipants Int?
+    // paymentStatus   PaymentStatus @default(UNPAID)
     status          EventStatus @default(OPEN)
-    ticketPrice      Float?      @default(0)
+    ticketPrice     Float?      @default(0)
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
 
@@ -55,6 +56,8 @@ model Participant {
     event   Event  @relation(fields: [eventId], references: [id])
     eventId String
 
+    paymentStatus PaymentStatus @default(UNPAID)
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
@@ -63,16 +66,17 @@ model Participant {
 }
 
 model Payment {
-    id            String        @id @default(uuid())
-    user          User          @relation(fields: [userId], references: [id])
-    userId        String
-    event         Event         @relation(fields: [eventId], references: [id])
-    eventId       String
-    amount        Float
-    status        PaymentStatus @default(PENDING)
-    transactionId String?
-    createdAt     DateTime      @default(now())
-    updatedAt     DateTime      @updatedAt
+    id                 String        @id @default(uuid())
+    user               User          @relation(fields: [userId], references: [id])
+    userId             String
+    event              Event         @relation(fields: [eventId], references: [id])
+    eventId            String
+    amount             Float
+    paymentStatus      PaymentStatus @default(UNPAID)
+    transactionId      String?
+    paymentGatewayData Json?
+    createdAt          DateTime      @default(now())
+    updatedAt          DateTime      @updatedAt
 
     @@map("payments")
 }
