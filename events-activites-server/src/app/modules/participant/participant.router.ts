@@ -25,5 +25,18 @@ router.post(
     ParticipantController.joinEvent
 );
 
+// Leave an event
+router.delete(
+    "/leave/:eventId",
+    CheckAuth(UserRole.USER, UserRole.HOST),
+    ParticipantController.leaveEvent
+);
+
+// Remove a participant (Host or Admin only)
+router.delete(
+    "/:id",
+    CheckAuth(UserRole.HOST, UserRole.ADMIN),
+    ParticipantController.removeParticipant
+);
 
 export const participantRoutes = router;

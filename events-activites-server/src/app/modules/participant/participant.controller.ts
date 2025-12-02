@@ -19,6 +19,32 @@ const joinEvent = catchAsync(async (req: Request & { user?: IJWTPayload }, res: 
     });
 })
 
+const leaveEvent = catchAsync(async (req: Request & { user?: IJWTPayload }, res: Response) => {
+    const { eventId } = req.params;
+    const user = req.user;
+    const result = await ParticipantService.leaveEvent(eventId, user as IJWTPayload);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Successfully left the event!",
+        data: result,
+    });
+})
+
+const removeParticipant = catchAsync(async (req: Request & { user?: IJWTPayload }, res: Response) => {
+    const { id } = req.params;
+    const user = req.user;
+    const result = await ParticipantService.removeParticipant(id, user as IJWTPayload);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Participant removed successfully!",
+        data: result,
+    });
+})
+
 const partcipantListByEvent = catchAsync(async (req: Request, res: Response) => {
     const { eventId } = req.params;
     const userFilterableFields = ["name", "email", "searchTerm"];
@@ -48,6 +74,8 @@ const getMyJoinedEvents = catchAsync(async (req: Request & { user?: IJWTPayload 
 
 export const ParticipantController = {
     joinEvent,
+    leaveEvent,
+    removeParticipant,
     partcipantListByEvent,
     getMyJoinedEvents
 }

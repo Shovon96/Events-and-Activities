@@ -97,6 +97,102 @@ const joinEvent = async (eventId: string, user: IJWTPayload) => {
     return result;
 }
 
+const leaveEvent = async (eventId: string, user: IJWTPayload) => {
+    // Verify user
+    const userInfo = await prisma.user.findUniqueOrThrow({
+        where: {
+            email: user?.email,
+            status: UserStatus.ACTIVE
+        }
+    });
+
+    // Find participant record
+    const participant = await prisma.participant.findFirst({
+        where: {
+            userId: userInfo.id,
+            eventId: eventId
+        }
+    });
+
+    if (!participant) {
+        throw new AppError(httpStatus.NOT_FOUND, "You are not a participant of this event!");
+    }
+
+    // Get event details
+    const event = await prisma.event.findUniqueOrThrow({
+        where: { id: eventId },
+        include: {
+            participants: true
+        }
+    });
+
+    // If event is completed user can not leave from the event
+    if (event.status === EventStatus.COMPLETED) {
+        throw new AppError(httpStatus.BAD_REQUEST, "Event is already completed!");
+    }
+
+    // Use transaction to leave event and update status if needed
+    const result = await prisma.$transaction(async (tx) => {
+        await tx.participant.delete({
+            where: { id: participant.id }
+        });
+
+        // Update event status to OPEN if it was FULL
+        if (event.status === EventStatus.FULL) {
+            await tx.event.update({
+                where: { id: eventId },
+                data: { status: EventStatus.OPEN }
+            });
+        }
+
+        return { message: "Successfully left the event" };
+    });
+
+    return result;
+}
+
+const removeParticipant = async (participantId: string, user: IJWTPayload) => {
+    // Verify user
+    const userInfo = await prisma.user.findUniqueOrThrow({
+        where: {
+            email: user?.email,
+            status: UserStatus.ACTIVE
+        }
+    });
+
+    // Find participant
+    const participant = await prisma.participant.findUniqueOrThrow({
+        where: { id: participantId },
+        include: {
+            event: true
+        }
+    });
+
+    // Only host or admin can remove participants
+    if (participant.event.hostId !== userInfo.id && userInfo.role !== UserRole.ADMIN) {
+        throw new AppError(httpStatus.FORBIDDEN, "You are not authorized to remove participants!");
+    }
+
+    // Use transaction to remove participant and update event status
+    const result = await prisma.$transaction(async (tx) => {
+        await tx.participant.delete({
+            where: { id: participantId }
+        });
+
+        // Update event status to OPEN if it was FULL
+        if (participant.event.status === EventStatus.FULL) {
+            await tx.event.update({
+                where: { id: participant.eventId },
+                data: { status: EventStatus.OPEN }
+            });
+        }
+
+        return { message: "Participant removed successfully" };
+    });
+
+    return result;
+}
+
 const partcipantListByEvent = async (eventId: string, params: any, options: IOptions) => {
 
     const { page, limit, skip, sortBy, sortOrder } = paginationHelper.calculatePagination(options)
@@ -213,6 +309,8 @@ const getMyJoinedEvents = async (user: IJWTPayload) => {
 
 export const ParticipantService = {
     joinEvent,
+    leaveEvent,
+    removeParticipant,
     partcipantListByEvent,
     getMyJoinedEvents
 }
