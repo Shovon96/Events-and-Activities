@@ -70,10 +70,27 @@ const getAllEvents = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+// Update event status
+const updateEventStatus = catchAsync(async (req: Request & { user?: IJWTPayload }, res: Response) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    const user = req.user;
+    
+    const result = await EventService.updateEventStatus(id, status, user as IJWTPayload);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Event status updated successfully!",
+        data: result,
+    });
+});
+
 export const EventController = {
     createEvent,
     getAllEvents,
     getSingleEvent,
     updateEvent,
     deleteEvent,
+    updateEventStatus,
 };

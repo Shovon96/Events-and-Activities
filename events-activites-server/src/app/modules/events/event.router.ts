@@ -4,6 +4,7 @@ import { UserRole } from "@prisma/client";
 import { eventValidation } from "./event.validation";
 import { EventController } from "./event.controller";
 import { fileUploader } from "../../helpers/fileUploader";
+import { ParticipantController } from "../participant/participant.controller";
 
 
 const router = Router();
@@ -14,13 +15,20 @@ router.get("/", EventController.getAllEvents);
 router.get("/:id", EventController.getSingleEvent);
 
 // create event
-router.post("/create-event",
+router.post("/",
     fileUploader.upload.single('file'),
     CheckAuth(UserRole.HOST, UserRole.ADMIN),
     (req: Request, res: Response, next: NextFunction) => {
         req.body = eventValidation.createEventValidation.parse(JSON.parse(req.body.data))
         return EventController.createEvent(req, res, next)
     })
+
+// Join an event
+router.post(
+    "/:id/join",
+    CheckAuth(UserRole.USER, UserRole.HOST),
+    ParticipantController.joinEvent
+);
 
 // update event
 router.patch("/:id",
@@ -32,6 +40,12 @@ router.patch("/:id",
         }
         return EventController.updateEvent(req, res, next)
     });
+
+// Update event status
+router.patch("/:id/status",
+    CheckAuth(UserRole.HOST, UserRole.ADMIN),
+    EventController.updateEventStatus
+);
 
 router.delete(
     "/:id",

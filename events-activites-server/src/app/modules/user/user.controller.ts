@@ -1,4 +1,3 @@
-// src/modules/user/user.controller.ts
 import { Request, Response } from "express";
 import { UserService } from "./user.service";
 import catchAsync from "../../shared/catchAsync";

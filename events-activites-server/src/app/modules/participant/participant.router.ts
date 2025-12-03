@@ -19,11 +19,11 @@ router.get(
 );
 
 // Join an event
-router.post(
-    "/join",
-    CheckAuth(UserRole.USER, UserRole.HOST),
-    ParticipantController.joinEvent
-);
+// router.post(
+//     "/join",
+//     CheckAuth(UserRole.USER, UserRole.HOST),
+//     ParticipantController.joinEvent
+// );
 
 // Leave an event
 router.delete(

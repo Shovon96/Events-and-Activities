@@ -7,7 +7,7 @@ import { IJWTPayload } from "../../types/common";
 import filterPick from "../../helpers/filterPick";
 
 const joinEvent = catchAsync(async (req: Request & { user?: IJWTPayload }, res: Response) => {
-    const { eventId } = req.body;
+    const eventId = req.params.id
     const user = req.user;
     const result = await ParticipantService.joinEvent(eventId, user as IJWTPayload);
 

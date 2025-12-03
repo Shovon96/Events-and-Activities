@@ -334,10 +334,71 @@ const getAllEvents = async (params: any, options: IOptions) => {
     };
 };
 
+// Update event status (COMPLETED, CANCELLED)
+const updateEventStatus = async (
+    id: string,
+    status: 'OPEN' | 'FULL' | 'CANCELLED' | 'COMPLETED',
+    user: IJWTPayload
+) => {
+    // Find existing event
+    const event = await prisma.event.findUniqueOrThrow({
+        where: { id },
+    });
+
+    // Verify user
+    const userInfo = await prisma.user.findUniqueOrThrow({
+        where: {
+            email: user?.email,
+            status: UserStatus.ACTIVE
+        }
+    });
+
+    // Host OR Admin Only
+    if (event.hostId !== userInfo.id && userInfo.role !== UserRole.ADMIN) {
+        throw new AppError(httpStatus.FORBIDDEN, "You're not authorized to update this event status!");
+    }
+
+    // Validate status transition
+    if (event.status === 'COMPLETED') {
+        throw new AppError(httpStatus.BAD_REQUEST, "Cannot change status of a completed event!");
+    }
+
+    if (event.status === 'CANCELLED' && status !== 'OPEN') {
+        throw new AppError(httpStatus.BAD_REQUEST, "Cancelled event can only be reopened!");
+    }
+
+    // Update event status
+    const result = await prisma.event.update({
+        where: { id },
+        data: { status },
+        include: {
+            host: {
+                select: {
+                    id: true,
+                    email: true,
+                    fullName: true,
+                    profileImage: true,
+                    role: true,
+                }
+            },
+            participants: {
+                select: {
+                    id: true,
+                    userId: true,
+                    paymentStatus: true
+                }
+            }
+        }
+    });
+
+    return result;
+};
+
 export const EventService = {
     createEvent,
     getAllEvents,
     getSingleEvent,
     updateEvent,
     deleteEvent,
+    updateEventStatus,
 };
