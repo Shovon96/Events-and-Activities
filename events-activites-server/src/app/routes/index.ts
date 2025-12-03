@@ -3,6 +3,7 @@ import { userRoutes } from '../modules/user/user.router';
 import { authRoutes } from '../modules/auth/auth.router';
 import { eventRoutes } from '../modules/events/event.router';
 import { participantRoutes } from '../modules/participant/participant.router';
+import { reviewRouter } from '../modules/reviews/review.router';
 // import { paymentRoutes } from '../modules/payment/payment.router';
 
 
@@ -24,6 +25,10 @@ const moduleRoutes = [
     {
         path: '/participants',
         route: participantRoutes
+    },
+    {
+        path: '/review',
+        route: reviewRouter
     },
     // {
     //     path: '/payments',
