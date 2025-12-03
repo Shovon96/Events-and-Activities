@@ -19,6 +19,36 @@ const postReview = catchAsync(async (req: Request & { user?: IJWTPayload }, res:
     });
 })
 
+const updateReview = catchAsync(async (req: Request & { user?: IJWTPayload }, res: Response) => {
+
+    const user = req.user as IJWTPayload;
+    const { id } = req.params;
+
+    const result = await ReviewService.updateReview(id, user , req.body);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Review updated successfully!",
+        data: result,
+    });
+});
+
+const deleteReview = catchAsync(async (req: Request & { user?: IJWTPayload }, res: Response) => {
+
+    const user = req.user as IJWTPayload;
+    const { id } = req.params;
+
+    await ReviewService.deleteReview(id, user);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Review deleted successfully!",
+        data: null,
+    });
+});
+
 const getEventByReviews = catchAsync(async (req: Request, res: Response) => {
 
     const { eventId } = req.params;
@@ -35,5 +65,7 @@ const getEventByReviews = catchAsync(async (req: Request, res: Response) => {
 
 export const ReviewController = {
     postReview,
+    updateReview,
+    deleteReview,
     getEventByReviews,
 };

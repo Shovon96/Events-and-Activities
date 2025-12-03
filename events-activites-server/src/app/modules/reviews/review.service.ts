@@ -79,6 +79,96 @@ const postReview = async (
     return review;
 };
 
+const updateReview = async (
+    reviewId: string,
+    user: IJWTPayload,
+    payload: {
+        rating?: number;
+        comment?: string;
+    }
+) => {
+    // Get user info
+    const userInfo = await prisma.user.findUnique({
+        where: {
+            email: user?.email,
+            status: UserStatus.ACTIVE
+        },
+    });
+    if (!userInfo) {
+        throw new AppError(httpStatus.NOT_FOUND, "User not found!");
+    }
+
+    const review = await prisma.review.findUnique({
+        where: { id: reviewId },
+    });
+
+    if (!review) {
+        throw new AppError(httpStatus.NOT_FOUND, "Review not found!");
+    }
+
+    // Ownership check - only author can update their review
+    if (review.authorId !== userInfo.id) {
+        throw new AppError(
+            httpStatus.FORBIDDEN,
+            "You are not authorized to update this review!"
+        );
+    }
+
+    const updated = await prisma.review.update({
+        where: { id: reviewId },
+        data: payload,
+        include: {
+            author: {
+                select: {
+                    id: true,
+                    fullName: true,
+                    email: true,
+                    profileImage: true,
+                },
+            },
+        },
+    });
+
+    return updated;
+};
+
+const deleteReview = async (reviewId: string, user: IJWTPayload) => {
+    // Get user info
+    const userInfo = await prisma.user.findUnique({
+        where: {
+            email: user?.email,
+            status: UserStatus.ACTIVE
+        },
+    });
+    if (!userInfo) {
+        throw new AppError(httpStatus.NOT_FOUND, "User not found!");
+    }
+
+    const review = await prisma.review.findUnique({
+        where: { id: reviewId },
+    });
+
+    if (!review) {
+        throw new AppError(httpStatus.NOT_FOUND, "Review not found!");
+    }
+
+    // Only author or admin can delete
+    const isAuthor = review.authorId === userInfo.id;
+    const isAdmin = user.role === "ADMIN";
+
+    if (!isAuthor && !isAdmin) {
+        throw new AppError(
+            httpStatus.FORBIDDEN,
+            "You are not authorized to delete this review!"
+        );
+    }
+
+    await prisma.review.delete({
+        where: { id: reviewId },
+    });
+
+    return { message: "Review deleted successfully" };
+};
 
 const getReviewsByEvent = async (eventId: string, options: IOptions) => {
 
@@ -124,7 +214,7 @@ const getReviewsByEvent = async (eventId: string, options: IOptions) => {
 
 export const ReviewService = {
     postReview,
-    // updateReview,
-    // deleteReview,
+    updateReview,
+    deleteReview,
     getReviewsByEvent,
 };
