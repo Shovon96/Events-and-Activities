@@ -120,12 +120,7 @@ const joinEvent = async (eventId: string, user: IJWTPayload) => {
             success_url: config.stripe_success_url,
             cancel_url: config.stripe_cancel_url
         });
-        
-        console.log('💳 Stripe session created:', {
-            sessionId: session.id,
-            paymentUrl: session.url,
-            metadata: session.metadata
-        });
+
         // Update event status to FULL if max participants reached
         const updatedParticipantCount = event.participants.length + 1;
         if (event.maxParticipants && updatedParticipantCount >= event.maxParticipants) {

@@ -3,6 +3,7 @@ import { userRoutes } from '../modules/user/user.router';
 import { authRoutes } from '../modules/auth/auth.router';
 import { eventRoutes } from '../modules/events/event.router';
 import { participantRoutes } from '../modules/participant/participant.router';
+// import { paymentRoutes } from '../modules/payment/payment.router';
 
 
 const router = express.Router();
@@ -23,7 +24,11 @@ const moduleRoutes = [
     {
         path: '/participants',
         route: participantRoutes
-    }
+    },
+    // {
+    //     path: '/payments',
+    //     route: paymentRoutes
+    // }
 ];
 
 moduleRoutes.forEach(route => router.use(route.path, route.route))

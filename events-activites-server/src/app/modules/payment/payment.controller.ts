@@ -5,11 +5,23 @@ import catchAsync from "../../shared/catchAsync";
 import sendResponse from "../../shared/sendResponse";
 import { stripe } from "../../helpers/stripe";
 import { PaymentService } from "./payment.service";
+import config from "../../../config";
 
 const handleStripeWebhookEvent = catchAsync(async (req: Request, res: Response) => {
 
-    const sig = req.headers["stripe-signature_test"] as string;
+    // Get the correct signature header (stripe-signature, not stripe-signature_test)
+    const sig = req.headers["stripe-signature"] as string;
     const webhookSecret = "whsec_46af8efe5cc24b523848fecb2502729e6e8c7251889433538255276bbf571a83"
+
+    if (!sig) {
+        console.error("❌ No stripe-signature header found");
+        return res.status(400).send('No signature header');
+    }
+
+    if (!webhookSecret) {
+        console.error("❌ Webhook secret not configured");
+        return res.status(500).send('Webhook secret not configured');
+    }
 
     let event;
     try {
@@ -18,6 +30,7 @@ const handleStripeWebhookEvent = catchAsync(async (req: Request, res: Response) 
             sig,
             webhookSecret
         );
+        console.log('✅ Webhook signature verified');
     } catch (err: any) {
         console.error("❌ Stripe Webhook Verification Failed:", err.message);
         return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -28,7 +41,7 @@ const handleStripeWebhookEvent = catchAsync(async (req: Request, res: Response) 
     sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: 'Webhook req send successfully',
+        message: 'Webhook processed successfully',
         data: result,
     });
 });
