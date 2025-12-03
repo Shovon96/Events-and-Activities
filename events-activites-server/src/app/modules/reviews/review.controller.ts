@@ -63,9 +63,37 @@ const getEventByReviews = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+// Get average rating for an event
+const getEventAverageRating = catchAsync(async (req: Request, res: Response) => {
+    const { eventId } = req.params;
+    const result = await ReviewService.getEventAverageRating(eventId);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Average rating fetched successfully!",
+        data: result,
+    });
+});
+
+// Get average rating for a host
+const getHostAverageRating = catchAsync(async (req: Request, res: Response) => {
+    const { hostId } = req.params;
+    const result = await ReviewService.getHostAverageRating(hostId);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Host average rating fetched successfully!",
+        data: result,
+    });
+});
+
 export const ReviewController = {
     postReview,
     updateReview,
     deleteReview,
     getEventByReviews,
+    getEventAverageRating,
+    getHostAverageRating, 
 };

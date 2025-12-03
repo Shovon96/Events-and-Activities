@@ -8,6 +8,12 @@ const router = Router();
 
 router.get("/event/:eventId", ReviewController.getEventByReviews);
 
+// Get average rating for an event
+router.get("/average-rating/:eventId", ReviewController.getEventAverageRating);
+
+// Get average rating for a host
+router.get("/average-rating/:hostId", ReviewController.getHostAverageRating);
+
 router.post(
     "/post-review",
     CheckAuth(UserRole.USER),

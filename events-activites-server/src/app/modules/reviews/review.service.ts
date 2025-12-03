@@ -212,9 +212,110 @@ const getReviewsByEvent = async (eventId: string, options: IOptions) => {
     };
 };
 
+// Get average rating for an event
+const getEventAverageRating = async (eventId: string) => {
+
+    // Verify event exists
+    await prisma.event.findUniqueOrThrow({
+        where: { id: eventId }
+    });
+
+    // Get all reviews for the event
+    const reviews = await prisma.review.findMany({
+        where: { eventId },
+        select: {
+            rating: true
+        }
+    });
+
+    if (reviews.length === 0) {
+        return {
+            eventId,
+            averageRating: 0,
+            totalReviews: 0,
+            message: "No reviews found for this event!",
+            ratingDistribution: {
+                "5": 0,
+                "4": 0,
+                "3": 0,
+                "2": 0,
+                "1": 0,
+            }
+        };
+    }
+
+    // Calculate average rating
+    const totalRating = reviews.reduce((sum, review) => sum + Number(review.rating), 0);
+    const averageRating = totalRating / reviews.length;
+
+    return {
+        eventId,
+        averageRating: Number(averageRating.toFixed(1)),
+        totalReviews: reviews.length,
+        ratingDistribution: {
+            "5": reviews.filter(r => Math.round(Number(r.rating)) === 5).length,
+            "4": reviews.filter(r => Math.round(Number(r.rating)) === 4).length,
+            "3": reviews.filter(r => Math.round(Number(r.rating)) === 3).length,
+            "2": reviews.filter(r => Math.round(Number(r.rating)) === 2).length,
+            "1": reviews.filter(r => Math.round(Number(r.rating)) === 1).length,
+        }
+    };
+};
+
+// Get average rating for a host
+const getHostAverageRating = async (hostId: string) => {
+    // Verify host exists
+    await prisma.user.findUniqueOrThrow({
+        where: { id: hostId }
+    });
+
+    // Get all reviews for the host
+    const reviews = await prisma.review.findMany({
+        where: { toId: hostId },
+        select: {
+            rating: true
+        }
+    });
+
+    if (reviews.length === 0) {
+        return {
+            hostId,
+            averageRating: 0,
+            totalReviews: 0,
+            message: "No reviews found for this host",
+            ratingDistribution: {
+                "5": 0,
+                "4": 0,
+                "3": 0,
+                "2": 0,
+                "1": 0,
+            }
+        };
+    }
+
+    // Calculate average rating
+    const totalRating = reviews.reduce((sum, review) => sum + Number(review.rating), 0);
+    const averageRating = totalRating / reviews.length;
+
+    return {
+        hostId,
+        averageRating: Number(averageRating.toFixed(1)),
+        totalReviews: reviews.length,
+        ratingDistribution: {
+            "5": reviews.filter(r => Math.round(Number(r.rating)) === 5).length,
+            "4": reviews.filter(r => Math.round(Number(r.rating)) === 4).length,
+            "3": reviews.filter(r => Math.round(Number(r.rating)) === 3).length,
+            "2": reviews.filter(r => Math.round(Number(r.rating)) === 2).length,
+            "1": reviews.filter(r => Math.round(Number(r.rating)) === 1).length,
+        }
+    };
+};
+
 export const ReviewService = {
     postReview,
     updateReview,
     deleteReview,
     getReviewsByEvent,
+    getEventAverageRating,
+    getHostAverageRating, 
 };
