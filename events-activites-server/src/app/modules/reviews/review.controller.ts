@@ -4,6 +4,7 @@ import sendResponse from "../../shared/sendResponse";
 import httpStatus from "http-status";
 import { ReviewService } from "./review.service";
 import { IJWTPayload } from "../../types/common";
+import filterPick from "../../helpers/filterPick";
 
 const postReview = catchAsync(async (req: Request & { user?: IJWTPayload }, res: Response) => {
 
@@ -18,6 +19,21 @@ const postReview = catchAsync(async (req: Request & { user?: IJWTPayload }, res:
     });
 })
 
+const getEventByReviews = catchAsync(async (req: Request, res: Response) => {
+
+    const { eventId } = req.params;
+    const options = filterPick(req.query, ["page", "limit", "sortBy", "sortOrder"]) // pagination and sorting
+    const result = await ReviewService.getReviewsByEvent(eventId, options);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Reviews fetched successfully!",
+        data: result,
+    });
+});
+
 export const ReviewController = {
     postReview,
+    getEventByReviews,
 };

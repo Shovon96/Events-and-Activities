@@ -1,10 +1,9 @@
-// src/modules/review/review.service.ts
-
 import { prisma } from "../../shared/prisma";
 import AppError from "../../errorHandler/AppError";
 import httpStatus from "http-status";
 import { IJWTPayload } from "../../types/common";
 import { EventStatus, UserStatus } from "@prisma/client";
+import { IOptions, paginationHelper } from "../../helpers/paginationHelper";
 
 const postReview = async (
     user: IJWTPayload,
@@ -80,6 +79,52 @@ const postReview = async (
     return review;
 };
 
+
+const getReviewsByEvent = async (eventId: string, options: IOptions) => {
+
+    const { page, limit, skip, sortBy, sortOrder } = paginationHelper.calculatePagination(options);
+
+    // Verify event exists
+    await prisma.event.findUniqueOrThrow({
+        where: { id: eventId }
+    });
+
+    const reviews = await prisma.review.findMany({
+        where: { eventId },
+        skip,
+        take: limit,
+        orderBy: {
+            [sortBy]: sortOrder
+        },
+        include: {
+            author: {
+                select: {
+                    id: true,
+                    fullName: true,
+                    email: true,
+                    profileImage: true,
+                },
+            },
+        },
+    });
+
+    const total = await prisma.review.count({
+        where: { eventId }
+    });
+
+    return {
+        meta: {
+            page,
+            limit,
+            total
+        },
+        data: reviews
+    };
+};
+
 export const ReviewService = {
     postReview,
+    // updateReview,
+    // deleteReview,
+    getReviewsByEvent,
 };
