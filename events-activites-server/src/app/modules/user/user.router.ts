@@ -11,6 +11,17 @@ router.get("/", CheckAuth(UserRole.ADMIN), UserController.getAllUsers)
 
 router.get('/my-profile', CheckAuth(UserRole.USER, UserRole.HOST, UserRole.ADMIN), UserController.getMyProfile)
 
+// Update my profile
+router.patch('/update-profile',
+    fileUploader.upload.single('file'),
+    CheckAuth(UserRole.USER, UserRole.HOST, UserRole.ADMIN),
+    (req: Request, res: Response, next: NextFunction) => {
+        if (req.body.data) {
+            req.body = JSON.parse(req.body.data);
+        }
+        return UserController.updateMyProfile(req, res, next)
+    })
+
 // user registration
 router.post("/register",
     fileUploader.upload.single('file'),

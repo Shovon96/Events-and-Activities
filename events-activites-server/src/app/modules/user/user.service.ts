@@ -7,7 +7,7 @@ import { Request } from "express";
 import { fileUploader } from "../../helpers/fileUploader";
 import fs from 'fs';
 import { IOptions, paginationHelper } from "../../helpers/paginationHelper";
-import { Prisma, UserRole, UserStatus } from "@prisma/client";
+import { Prisma, User, UserRole, UserStatus } from "@prisma/client";
 import { IJWTPayload } from "../../types/common";
 
 const createUser = async (req: Request) => {
@@ -167,9 +167,120 @@ const getMyProfile = async (user: IJWTPayload) => {
 
 };
 
+// Update user profile (name, bio, interests, city)
+const updateMyProfile = async (req: Request, user: IJWTPayload) => {
+
+    let uploadedImagePublicId: string | undefined;
+    let localFilePath: string | undefined;
+    let oldImagePublicId: string | undefined;
+
+    try {
+        // Verify user exists
+        const userInfo = await prisma.user.findUniqueOrThrow({
+            where: {
+                email: user?.email,
+                status: UserStatus.ACTIVE
+            }
+        });
+
+        if (!userInfo) {
+            throw new AppError(httpStatus.NOT_FOUND, "User not found!");
+        }
+
+        // not to be update payload
+        if(req.body.email || req.body.password || req.body.role || req.body.status || req.body.interests) {
+            throw new AppError(httpStatus.FORBIDDEN, `You can't update ${req.body.email || req.body.password || req.body.role || req.body.status || req.body.interests}!`);
+        }
+
+        // Extract old image public_id if exists
+        if (userInfo.profileImage) {
+            const urlParts = userInfo.profileImage.split('/');
+            const publicIdWithExt = urlParts.slice(-2).join('/');
+            oldImagePublicId = publicIdWithExt.split('.')[0];
+        }
+
+        // Upload new profile image if provided
+        if (req.file) {
+            localFilePath = req.file.path;
+            const uploadResult = await fileUploader.uploadToCloudinary(req.file);
+
+            if (uploadResult && uploadResult.secure_url) {
+                uploadedImagePublicId = uploadResult.public_id;
+                req.body.profileImage = uploadResult.secure_url;
+            }
+
+            // Delete local file after upload
+            if (fs.existsSync(req.file.path)) {
+                fs.unlinkSync(req.file.path);
+                localFilePath = undefined;
+            }
+        }
+
+        // Prepare update data
+        const updateData: Partial<User> = {};
+        
+        if (req.body.fullName) updateData.fullName = req.body.fullName;
+        if (req.body.bio) updateData.bio = req.body.bio;
+        if (req.body.city) updateData.city = req.body.city;
+        if (req.body.interests) updateData.interests = req.body.interests;
+        if (req.body.profileImage) updateData.profileImage = req.body.profileImage;
+
+        // Use transaction to update profile
+        const result = await prisma.$transaction(async (tx) => {
+            const updatedUser = await tx.user.update({
+                where: { id: userInfo.id },
+                data: updateData,
+                select: {
+                    id: true,
+                    email: true,
+                    fullName: true,
+                    bio: true,
+                    profileImage: true,
+                    interests: true,
+                    city: true,
+                    role: true,
+                    status: true,
+                    createdAt: true,
+                    updatedAt: true,
+                }
+            });
+
+            // Delete old image from Cloudinary if new image was uploaded
+            if (oldImagePublicId && uploadedImagePublicId) {
+                try {
+                    await fileUploader.deleteFromCloudinary(oldImagePublicId);
+                } catch (deleteError) {
+                    console.error('Failed to delete old image from Cloudinary:', deleteError);
+                }
+            }
+
+            return updatedUser;
+        });
+
+        return result;
+    } catch (error) {
+        // Clean up newly uploaded image if update fails
+        if (uploadedImagePublicId) {
+            try {
+                await fileUploader.deleteFromCloudinary(uploadedImagePublicId);
+            } catch (deleteError) {
+                console.error('Failed to delete image from Cloudinary:', deleteError);
+            }
+        }
+
+        // Clean up local file if it still exists
+        if (localFilePath && fs.existsSync(localFilePath)) {
+            fs.unlinkSync(localFilePath);
+        }
+
+        throw error;
+    }
+};
+
 
 export const UserService = {
     createUser,
     getAllUsers,
-    getMyProfile
+    getMyProfile,
+    updateMyProfile
 }
