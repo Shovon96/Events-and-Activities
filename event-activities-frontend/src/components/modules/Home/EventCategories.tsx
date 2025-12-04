@@ -1,0 +1,104 @@
+import { Music, Trophy, Palette, Utensils, Cpu, Heart, Users, BookOpen } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const categories = [
+    {
+        id: 1,
+        name: "Music",
+        count: "2.5K+ events",
+        icon: Music,
+        bg: "bg-rose-500",
+    },
+    {
+        id: 2,
+        name: "Sports",
+        count: "1.8K+ events",
+        icon: Trophy,
+        bg: "bg-yellow-500",
+    },
+    {
+        id: 3,
+        name: "Arts",
+        count: "950+ events",
+        icon: Palette,
+        bg: "bg-purple-500",
+    },
+    {
+        id: 4,
+        name: "Food & Drink",
+        count: "1.2K+ events",
+        icon: Utensils,
+        bg: "bg-orange-500",
+    },
+    {
+        id: 5,
+        name: "Tech",
+        count: "780+ events",
+        icon: Cpu,
+        bg: "bg-cyan-500",
+    },
+    {
+        id: 6,
+        name: "Wellness",
+        count: "620+ events",
+        icon: Heart,
+        bg: "bg-green-500",
+    },
+    {
+        id: 7,
+        name: "Networking",
+        count: "890+ events",
+        icon: Users,
+        bg: "bg-blue-500",
+    },
+    {
+        id: 8,
+        name: "Workshops",
+        count: "540+ events",
+        icon: BookOpen,
+        bg: "bg-pink-500",
+    },
+];
+
+export default function EventCategories() {
+    return (
+        <section className="py-20 bg-foreground text-white">
+            {/* Header */}
+            <div className="text-center mb-12">
+                <p className="text-xs font-semibold text-secondary tracking-wide mb-2">
+                    EXPLORE
+                </p>
+                <h2 className="text-4xl md:text-4xl font-bold mb-2">Event Categories</h2>
+                <p className="text-gray-400 max-w-lg mx-auto">
+                    From live music to tech conferences, find events that match your interests.
+                </p>
+            </div>
+
+            {/* Grid */}
+            <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
+                {categories.map((cat) => {
+                    const Icon = cat.icon;
+
+                    return (
+                        <div
+                            key={cat.id}
+                            className={cn(
+                                "bg-[#051841] rounded-xl p-10 flex items-start gap-4",
+                                "cursor-pointer transition-all hover:-translate-y-1 hover:bg-[#152039]"
+                            )}
+                        >
+                            <div className={cn("p-3 rounded-lg text-white", cat.bg)}>
+                                <Icon size={22} />
+                            </div>
+
+                            <div>
+                                <h3 className="font-semibold text-lg">{cat.name}</h3>
+                                <p className="text-sm text-gray-400">{cat.count}</p>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </section>
+    );
+}
