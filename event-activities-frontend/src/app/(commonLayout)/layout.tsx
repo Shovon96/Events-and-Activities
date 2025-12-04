@@ -1,4 +1,4 @@
-import PublicFooter from "@/components/shared/PublicFooter";
+import Footer from "@/components/shared/Footer";
 import { Navbar } from "@/components/shared/Navbar";
 
 const CommonLayout = async ({ children }: { children: React.ReactNode }) => {
@@ -7,7 +7,7 @@ const CommonLayout = async ({ children }: { children: React.ReactNode }) => {
         <>
             <Navbar />
             {children}
-            <PublicFooter />
+            <Footer />
         </>
     );
 };
