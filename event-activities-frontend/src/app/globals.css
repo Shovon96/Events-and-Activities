@@ -51,9 +51,9 @@
   --card-foreground: oklch(0.2 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.2 0 0);
-  --primary: oklch(0.55 0.2 250); /* Professional blue */
+  --primary: oklch(54.215% 0.23476 324.766);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.96 0 0);
+  --secondary: oklch(67.866% 0.17746 49.309);
   --secondary-foreground: oklch(0.25 0 0);
   --muted: oklch(0.96 0 0);
   --muted-foreground: oklch(0.5 0 0);
