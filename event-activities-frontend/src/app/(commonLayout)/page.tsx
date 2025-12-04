@@ -2,7 +2,9 @@ import EventCategories from "@/components/modules/Home/EventCategories";
 import HomeHero from "@/components/modules/Home/HomeHero";
 import HowIsWork from "@/components/modules/Home/HowIsWork";
 import PopularEvents from "@/components/modules/Home/PopularEvents";
+import Testimonials from "@/components/modules/Home/Testimonials";
 import TopRatedHosts from "@/components/modules/Home/TopRatedHost";
+import WhyChooseEventora from "@/components/modules/Home/WhyChooseEventora";
 import Head from "next/head";
 
 export default function Home() {
@@ -23,6 +25,8 @@ export default function Home() {
         <PopularEvents />
         <EventCategories />
         <TopRatedHosts />
+        <WhyChooseEventora />
+        <Testimonials />
       </main>
     </>
   );

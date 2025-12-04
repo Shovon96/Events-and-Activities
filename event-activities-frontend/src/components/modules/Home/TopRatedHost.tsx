@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import { Star, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -41,7 +39,7 @@ const hosts = [
 
 export default function TopRatedHosts() {
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20">
       <div className="text-center mb-12">
         <p className="text-xs font-semibold text-secondary tracking-wide mb-2">
           TRUSTED EXPERTS
