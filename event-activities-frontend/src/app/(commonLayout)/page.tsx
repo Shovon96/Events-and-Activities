@@ -1,4 +1,6 @@
 import HomeHero from "@/components/modules/Home/HomeHero";
+import HowIsWork from "@/components/modules/Home/HowIsWork";
+import PopularEvents from "@/components/modules/Home/PopularEvents";
 import Head from "next/head";
 
 export default function Home() {
@@ -15,6 +17,8 @@ export default function Home() {
       </Head>
       <main>
         <HomeHero />
+        <HowIsWork />
+        <PopularEvents />
       </main>
     </>
   );
