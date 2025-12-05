@@ -251,7 +251,8 @@ const deleteEvent = async (id: string, user: IJWTPayload) => {
 };
 
 const getSingleEvent = async (id: string) => {
-    return prisma.event.findUniqueOrThrow({
+
+    const event = await prisma.event.findUnique({
         where: { id },
         include: {
             host: {
@@ -264,9 +265,16 @@ const getSingleEvent = async (id: string) => {
             },
             participants: true,
             reviews: true,
-        },
+        }
     });
+
+    if (!event) {
+        throw new AppError(httpStatus.NOT_FOUND, "Event not found!");
+    }
+
+    return event;
 };
+
 
 const getAllEvents = async (params: any, options: IOptions) => {
 
