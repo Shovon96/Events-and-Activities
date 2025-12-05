@@ -1,4 +1,4 @@
-import { z } from "zod";
+import z from 'zod'
 
 export const createUserValidationSchema = z.object({
     email: z.string().min(1, "Email is required"),
@@ -10,7 +10,3 @@ export const createUserValidationSchema = z.object({
     city: z.string().optional(),
     role: z.enum(["USER", "HOST", "ADMIN"]).default("USER"),
 });
-
-export const UserValidation = {
-    createUserValidationSchema
-}
