@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import CommonLogo from "./CommonLogo";
-import LogoutButton from "./LogoutButton";
+import ProfileMenu from "./ProfileMenu";
 import { getUserInfo } from "@/lib/getUserSession";
 import MobileMenu from "./MobileMenu";
 
@@ -36,7 +36,7 @@ export async function Navbar() {
       <NavLink href="/blogs">Blogs</NavLink>
       <NavLink href="/contact">Contact</NavLink>
       <div className="flex items-center gap-3">
-        <LogoutButton />
+        <ProfileMenu user={userInfo} />
       </div>
     </>
   );
@@ -50,7 +50,7 @@ export async function Navbar() {
       <NavLink href="/blogs">Blogs</NavLink>
       <NavLink href="/contact">Contact</NavLink>
       <div className="flex items-center gap-3">
-        <LogoutButton />
+        <ProfileMenu user={userInfo} />
       </div>
     </>
   );
@@ -63,7 +63,7 @@ export async function Navbar() {
       <NavLink href="/admin/events">Events</NavLink>
       <NavLink href="/profile">Profile</NavLink>
       <div className="flex items-center gap-3">
-        <LogoutButton />
+        <ProfileMenu user={userInfo} />
       </div>
     </>
   );
