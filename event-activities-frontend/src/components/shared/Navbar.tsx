@@ -1,30 +1,27 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import CommonLogo from "./CommonLogo";
+import LogoutButton from "./LogoutButton";
+import { getUserInfo } from "@/lib/getUserSession";
+import MobileMenu from "./MobileMenu";
 
 type UserRole = "GUEST" | "USER" | "HOST" | "ADMIN";
 
-interface NavbarProps {
-  role?: UserRole;
-}
-
-export function Navbar({ role = "GUEST" }: NavbarProps) {
-  const [open, setOpen] = useState(false);
+export async function Navbar() {
+  // Get user session
+  const userInfo = await getUserInfo();
+  const role: UserRole = userInfo?.role || "GUEST";
+  const isLoggedIn = !!userInfo;
 
   const GuestLinks = (
     <>
       <NavLink href="/events">Explore Events</NavLink>
       <NavLink href="/become-host">Become a Host</NavLink>
-      <NavLink href="/become-host">Blogs</NavLink>
-      <NavLink href="/become-host">Contact</NavLink>
+      <NavLink href="/blogs">Blogs</NavLink>
+      <NavLink href="/contact">Contact</NavLink>
 
       <div className="flex items-center gap-2">
-        <Button variant="outline" asChild>
+        <Button variant="default" asChild>
           <Link href="/login">Login</Link>
         </Button>
       </div>
@@ -36,34 +33,38 @@ export function Navbar({ role = "GUEST" }: NavbarProps) {
       <NavLink href="/events">Explore Events</NavLink>
       <NavLink href="/my-events">My Events</NavLink>
       <NavLink href="/profile">Profile</NavLink>
-      <NavLink href="/become-host">Blogs</NavLink>
-      <NavLink href="/become-host">Contact</NavLink>
-      <LogoutButton />
+      <NavLink href="/blogs">Blogs</NavLink>
+      <NavLink href="/contact">Contact</NavLink>
+      <div className="flex items-center gap-3">
+        <LogoutButton />
+      </div>
     </>
   );
 
   const HostLinks = (
     <>
       <NavLink href="/events">Explore Events</NavLink>
-      <NavLink href="/host/events">My Events (Hosted)</NavLink>
+      <NavLink href="/host/events">My Hosted Events</NavLink>
       <NavLink href="/host/create">Create Event</NavLink>
       <NavLink href="/profile">Profile</NavLink>
-      <NavLink href="/become-host">Blogs</NavLink>
-      <NavLink href="/become-host">Contact</NavLink>
-      <LogoutButton />
+      <NavLink href="/blogs">Blogs</NavLink>
+      <NavLink href="/contact">Contact</NavLink>
+      <div className="flex items-center gap-3">
+        <LogoutButton />
+      </div>
     </>
   );
 
   const AdminLinks = (
     <>
-      <NavLink href="/admin">Admin Dashboard</NavLink>
-      <NavLink href="/admin/users">Manage Users</NavLink>
-      <NavLink href="/admin/hosts">Manage Hosts</NavLink>
-      <NavLink href="/admin/events">Manage Events</NavLink>
+      <NavLink href="/admin/dashboard">Dashboard</NavLink>
+      <NavLink href="/admin/users">Users</NavLink>
+      <NavLink href="/admin/hosts">Hosts</NavLink>
+      <NavLink href="/admin/events">Events</NavLink>
       <NavLink href="/profile">Profile</NavLink>
-      <NavLink href="/become-host">Blogs</NavLink>
-      <NavLink href="/become-host">Contact</NavLink>
-      <LogoutButton />
+      <div className="flex items-center gap-3">
+        <LogoutButton />
+      </div>
     </>
   );
 
@@ -92,17 +93,7 @@ export function Navbar({ role = "GUEST" }: NavbarProps) {
 
         {/* Mobile Menu */}
         <div className="md:hidden">
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu size={24} />
-              </Button>
-            </SheetTrigger>
-
-            <SheetContent side="right" className="w-64">
-              <div className="flex flex-col gap-4 mt-6">{renderLinks()}</div>
-            </SheetContent>
-          </Sheet>
+          <MobileMenu links={renderLinks()} />
         </div>
       </nav>
     </header>
@@ -126,10 +117,3 @@ function NavLink({
   );
 }
 
-function LogoutButton() {
-  return (
-    <Button variant="destructive" size="sm" onClick={() => console.log("logout")}>
-      Logout
-    </Button>
-  );
-}

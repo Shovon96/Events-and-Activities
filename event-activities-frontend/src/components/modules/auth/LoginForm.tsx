@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Eye, EyeOff } from "lucide-react";
 import { loginValidationZodSchema } from "@/zodValidations/auth.validation";
 import { useRouter } from "next/navigation";
+import { loginUser } from "@/service/loginUser";
 import { toast } from "sonner";
 
 export interface ILoginInput {
@@ -40,32 +41,20 @@ export default function LoginForm() {
                 password: form.password,
             });
 
-            // Make API call to backend
-            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/v1/api";
-            const endpoint = `${API_BASE_URL}/auth/login`;
+            // Call server action to login
+            const result = await loginUser(validatedData.email, validatedData.password);
 
-            const response = await fetch(endpoint, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(validatedData),
-                credentials: "include", // Important for cookies
-            });
-
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                toast.error(responseData?.message || "Api Error!");
-                throw new Error(responseData.message || "Login failed");
+            if (!result.success) {
+                toast.error(result.message || "Invalid email or password.");
+                throw new Error(result.message);
             }
 
             setSuccess("Login successful! Redirecting...");
 
             // Store user data in localStorage (optional)
-            if (responseData.data?.user) {
-                localStorage.setItem("user", JSON.stringify(responseData.data.user));
-            }
+            // if (result.data?.user) {
+            //     localStorage.setItem("user", JSON.stringify(result.data.user));
+            // }
 
             // Reset form
             setForm({
@@ -77,7 +66,8 @@ export default function LoginForm() {
             // Redirect to home/dashboard after 1 second
             setTimeout(() => {
                 router.push("/");
-                toast.success(responseData?.message || "Login successful!");
+                toast.success(result?.message);
+                // router.refresh(); // Refresh to update navbar
             }, 1000);
 
         } catch (err: any) {
