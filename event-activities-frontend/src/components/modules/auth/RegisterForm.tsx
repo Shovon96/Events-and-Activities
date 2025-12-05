@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Upload, Eye, EyeOff, X } from "lucide-react";
-import { createUserValidationSchema } from "@/zodValidations/registerUser.validation";
+import { createUserValidationSchema } from "@/zodValidations/auth.validation";
 import { useRouter } from "next/navigation";
 
 export type IUserRole = "USER" | "HOST" | "ADMIN";

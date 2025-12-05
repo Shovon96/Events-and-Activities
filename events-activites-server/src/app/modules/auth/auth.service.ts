@@ -9,12 +9,16 @@ import { Secret } from "jsonwebtoken";
 import { IPassword } from "./auth.interface";
 
 const login = async (payload: { email: string, password: string }) => {
-    const user = await prisma.user.findUniqueOrThrow({
+    const user = await prisma.user.findUnique({
         where: {
             email: payload.email,
             status: UserStatus.ACTIVE
         }
     })
+
+    if (!user) {
+        throw new AppError(httpStatus.NOT_FOUND, "User not found!");
+    }
 
     const isCorrectPassword = await bcrypt.compare(payload.password, user.password);
     if (!isCorrectPassword) {
