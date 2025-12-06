@@ -37,17 +37,17 @@ export default function ContactPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+        <div className="min-h-screen bg-linear-to-br from-purple-50 via-white to-pink-50">
             
             {/* Hero Section */}
             <section className="relative py-20 px-4 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10" />
+                <div className="absolute inset-0 bg-linear-to-r from-purple-600/10 to-pink-600/10" />
                 <div className="max-w-6xl mx-auto relative z-10">
                     <div className="text-center">
                         <Badge className="mb-4 bg-purple-100 text-purple-700 px-4 py-2">Get In Touch</Badge>
                         <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
                             We'd Love to
-                            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> Hear From You</span>
+                            <span className="bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> Hear From You</span>
                         </h1>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
                             Have questions, feedback, or need assistance? Our team is here to help you 
@@ -167,7 +167,7 @@ export default function ContactPage() {
                                         <Button 
                                             type="submit" 
                                             size="lg"
-                                            className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                                            className="w-full h-14 text-lg font-semibold bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                                             disabled={isSubmitting}
                                         >
                                             {isSubmitting ? (
@@ -225,7 +225,7 @@ export default function ContactPage() {
                             </Card>
 
                             {/* Office Hours */}
-                            <Card className="p-6 bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-xl">
+                            <Card className="p-6 bg-linear-to-br from-purple-600 to-pink-600 text-white shadow-xl">
                                 <h3 className="text-xl font-bold mb-4">Office Hours</h3>
                                 <div className="space-y-3">
                                     <div className="flex justify-between">
@@ -273,7 +273,7 @@ export default function ContactPage() {
             <section className="py-16 px-4 bg-white/50">
                 <div className="max-w-6xl mx-auto">
                     <Card className="overflow-hidden shadow-xl">
-                        <div className="h-[400px] bg-gradient-to-br from-purple-200 to-pink-200 flex items-center justify-center">
+                        <div className="h-[400px] bg-linear-to-br from-purple-200 to-pink-200 flex items-center justify-center">
                             <div className="text-center">
                                 <MapPin className="w-16 h-16 text-purple-600 mx-auto mb-4" />
                                 <h3 className="text-2xl font-bold text-gray-800 mb-2">Find Us Here</h3>

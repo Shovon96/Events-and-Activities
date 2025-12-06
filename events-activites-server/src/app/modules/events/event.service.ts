@@ -261,10 +261,36 @@ const getSingleEvent = async (id: string) => {
                     email: true,
                     fullName: true,
                     role: true,
+                    reviewsReceived: {
+                        select: {
+                            id: true,
+                            rating: true,
+                            comment: true,
+                            eventId: true
+                        }
+                    }
                 }
             },
-            participants: true,
-            reviews: true,
+            participants: {
+                select: {
+                    id: true,
+                    userId: true,
+                    eventId: true
+                }
+            },
+            reviews: {
+                select: {
+                    id: true,
+                    rating: true,
+                    comment: true,
+                    author: {
+                        select: {
+                            fullName: true,
+                            profileImage: true
+                        }
+                    }
+                }
+            }
         }
     });
 

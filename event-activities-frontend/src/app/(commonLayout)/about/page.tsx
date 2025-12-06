@@ -1,21 +1,20 @@
-import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, Calendar, MapPin, Heart, Target, Zap, Shield, Award } from "lucide-react";
 
 export default function AboutPage() {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+        <div className="min-h-screen bg-linear-to-br from-purple-50 via-white to-pink-50">
             
             {/* Hero Section */}
             <section className="relative py-20 px-4 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10" />
+                <div className="absolute inset-0 bg-linear-to-r from-purple-600/10 to-pink-600/10" />
                 <div className="max-w-6xl mx-auto relative z-10">
                     <div className="text-center">
                         <Badge className="mb-4 bg-purple-100 text-purple-700 px-4 py-2">About Eventora</Badge>
                         <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
                             Connecting People Through
-                            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> Amazing Events</span>
+                            <span className="bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> Amazing Events</span>
                         </h1>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
                             We're on a mission to make event discovery and participation seamless, 
@@ -85,7 +84,7 @@ export default function AboutPage() {
                             </div>
                         </div>
                         <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-2xl">
-                            <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                            <div className="absolute inset-0 bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                                 <div className="text-center text-white p-8">
                                     <Calendar className="w-24 h-24 mx-auto mb-4 opacity-80" />
                                     <h3 className="text-3xl font-bold mb-2">Since 2020</h3>
@@ -159,7 +158,7 @@ export default function AboutPage() {
                             { name: "Emily Rodriguez", role: "Head of Community", color: "from-pink-500 to-rose-500" },
                         ].map((member, index) => (
                             <Card key={index} className="p-6 text-center hover:shadow-xl transition-shadow bg-white">
-                                <div className={`w-24 h-24 bg-gradient-to-br ${member.color} rounded-full mx-auto mb-4 flex items-center justify-center text-white text-3xl font-bold`}>
+                                <div className={`w-24 h-24 bg-linear-to-br ${member.color} rounded-full mx-auto mb-4 flex items-center justify-center text-white text-3xl font-bold`}>
                                     {member.name.split(' ').map(n => n[0]).join('')}
                                 </div>
                                 <h3 className="text-xl font-bold text-gray-900 mb-1">{member.name}</h3>
@@ -179,7 +178,7 @@ export default function AboutPage() {
             </section>
 
             {/* Why Choose Us Section */}
-            <section className="py-16 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+            <section className="py-16 px-4 bg-linear-to-r from-purple-600 to-pink-600 text-white">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-12">
                         <h2 className="text-4xl font-bold mb-4">Why Choose Eventora?</h2>
