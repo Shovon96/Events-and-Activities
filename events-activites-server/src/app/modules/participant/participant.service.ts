@@ -321,12 +321,16 @@ const partcipantListByEvent = async (eventId: string, params: any, options: IOpt
 
 const getMyJoinedEvents = async (user: IJWTPayload) => {
     // Verify user
-    const userInfo = await prisma.user.findUniqueOrThrow({
+    const userInfo = await prisma.user.findUnique({
         where: {
             email: user?.email,
             status: UserStatus.ACTIVE
         }
     });
+
+    if (!userInfo) {
+        throw new AppError(httpStatus.BAD_GATEWAY, "You are not authorize!")
+    }
 
     return prisma.participant.findMany({
         where: { userId: userInfo.id },
@@ -341,7 +345,14 @@ const getMyJoinedEvents = async (user: IJWTPayload) => {
                             profileImage: true
                         }
                     },
-                    participants: true
+                    participants: {
+                        select: {
+                            id: true,
+                            userId: true,
+                            eventId: true,
+                            paymentStatus: true,
+                        }
+                    }
                 }
             }
         },

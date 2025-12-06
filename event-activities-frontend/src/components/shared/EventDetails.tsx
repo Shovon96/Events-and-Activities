@@ -55,22 +55,27 @@ interface EventDetailsProps {
         participants?: Participant[];
         reviews?: EventReview[];
     };
+    currentUserId?: string; // Optional: current logged-in user ID
 }
 
-export default function EventDetails({ data }: EventDetailsProps) {
+export default function EventDetails({ data, currentUserId }: EventDetailsProps) {
     const event = data;
-    console.log('data', data)
+    
+    // Check if current user has joined this event
+    const hasUserJoined = currentUserId && event.participants && Array.isArray(event.participants) 
+        ? event.participants.some(p => p.userId === currentUserId) 
+        : false;
 
     // Calculate average ratings
     const calculateAverageRating = (reviews?: HostReview[] | EventReview[]) => {
-        if (!reviews || reviews.length === 0) return 0;
+        if (!reviews || !Array.isArray(reviews) || reviews.length === 0) return 0;
         const sum = reviews.reduce((acc, review) => acc + parseFloat(review.rating), 0);
         return (sum / reviews.length).toFixed(1);
     };
 
-    const hostAverageRating = calculateAverageRating(event.host.reviewsReceived);
+    const hostAverageRating = calculateAverageRating(event.host?.reviewsReceived);
     const eventAverageRating = calculateAverageRating(event.reviews);
-    const participantsCount = event.participants?.length || 0;
+    const participantsCount = event.participants && Array.isArray(event.participants) ? event.participants.length : 0;
 
     // Hydration-safe formatted values
     const [formattedStart, setFormattedStart] = useState({
@@ -390,15 +395,28 @@ export default function EventDetails({ data }: EventDetailsProps) {
                                     <MapPin className="w-5 h-5 text-purple-500" />
                                     <span className="text-sm">{event.location}</span>
                                 </div>
+                                {hasUserJoined &&
+                                <p className="text-base text-green-600">✔ You have joined this event</p>
+                                }
                             </div>
 
                             {/* CTA Button */}
-                            <Button
-                                size="lg"
-                                className="w-full cursor-pointer h-14 text-lg font-semibold bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all"
-                            >
-                                Join This Event
-                            </Button>
+                            {hasUserJoined ? (
+                                <Button
+                                    size="lg"
+                                    variant="destructive"
+                                    className="w-full cursor-pointer h-14 text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+                                >
+                                    Cancel Event
+                                </Button>
+                            ) : (
+                                <Button
+                                    size="lg"
+                                    className="w-full cursor-pointer h-14 text-lg font-semibold bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all"
+                                >
+                                    Join This Event
+                                </Button>
+                            )}
 
                             {/* Additional Info */}
                             <div className="mt-6 pt-6 border-t">

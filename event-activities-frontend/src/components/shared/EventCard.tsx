@@ -15,10 +15,28 @@ interface IEventApiResponse {
     }
 }
 
-export default function EventCard({ events }: { events: IEventApiResponse }) {
+interface EventCardProps {
+    events: IEventApiResponse;
+    currentUserId?: string; // Optional: current logged-in user ID
+}
+
+export default function EventCard({ events, currentUserId }: EventCardProps) {
+
+    // Check if user has joined an event with PAID status
+    const hasUserJoinedWithPayment = (event: any) => {
+        if (!currentUserId) return false;
+        if (!event.participants || !Array.isArray(event.participants)) return false;
+        return event.participants.some((p: any) => 
+            p.userId === currentUserId && p.paymentStatus === "PAID"
+        );
+    };
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-12">
-            {events?.data?.data?.map((event: IEvent) => (
+            {events?.data?.data?.map((event: IEvent) => {
+                const isJoined = hasUserJoinedWithPayment(event);
+                
+                return (
                 <Card
                     key={event.id}
                     className={cn(
@@ -71,13 +89,25 @@ export default function EventCard({ events }: { events: IEventApiResponse }) {
                             >
                                 View Details
                             </Link>
-                            <Link href={`/events/${event.id}`} className="text-white border border-primary bg-primary hover:bg-white hover:text-primary inline-block px-4 py-2 rounded-md text-sm font-semibold transition-colors duration-300 w-1/2 text-center">
-                                Book Now
-                            </Link>
+                            
+                            {isJoined ? (
+                                <button 
+                                    className="text-white border border-red-500 bg-red-500 hover:bg-white hover:text-red-500 inline-block px-4 py-2 rounded-md text-sm font-semibold transition-colors duration-300 w-1/2 text-center cursor-pointer"
+                                >
+                                    Cancel Event
+                                </button>
+                            ) : (
+                                <Link 
+                                    href={`/events/${event.id}`} 
+                                    className="text-white border border-primary bg-primary hover:bg-white hover:text-primary inline-block px-4 py-2 rounded-md text-sm font-semibold transition-colors duration-300 w-1/2 text-center"
+                                >
+                                    Book Now
+                                </Link>
+                            )}
                         </div>
                     </CardContent>
                 </Card>
-            ))
+            )})
             }
         </div >
     )

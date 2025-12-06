@@ -8,4 +8,10 @@ export interface IEvent {
     startDate: Date;
     endDate: Date;
     ticketPrice?: number;
+    participants?: Array<{
+        id: string;
+        userId: string;
+        eventId: string;
+        paymentStatus?: string;
+    }>;
 }
