@@ -132,7 +132,7 @@ const getAllUsers = async (params: any, options: IOptions) => {
 }
 
 const getMyProfile = async (user: IJWTPayload) => {
-    
+
     const userInfo = await prisma.user.findUnique({
         where: {
             email: user?.email,
@@ -142,6 +142,9 @@ const getMyProfile = async (user: IJWTPayload) => {
             id: true,
             email: true,
             fullName: true,
+            profileImage: true,
+            city: true,
+            bio: true,
             interests: true,
             role: true,
             status: true
@@ -158,6 +161,63 @@ const getMyProfile = async (user: IJWTPayload) => {
         profileData = await prisma.user.findUnique({
             where: {
                 email: userInfo.email
+            },
+            select: {
+                joinedEvents: {
+                    select: {
+                        id: true,
+                        paymentStatus: true,
+                        event: {
+                            select: {
+                                id: true,
+                                name: true,
+                                status: true,
+                                reviews: {
+                                    select: {
+                                        id: true,
+                                        rating: true,
+                                        comment: true,
+                                    }
+                                },
+                                ticketPrice: true,
+                                host: {
+                                    select: {
+                                        id: true,
+                                        email: true,
+                                        fullName: true,
+                                        profileImage: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    if(userInfo.role === UserRole.HOST){
+        profileData = await prisma.user.findUnique({
+            where: {
+                email: userInfo.email
+            },
+            select: {
+                hostedEvents: {
+                    select: {
+                        id: true,
+                        name: true,
+                        status: true,
+                        ticketPrice: true,
+                        host: {
+                            select: {
+                                id: true,
+                                email: true,
+                                fullName: true,
+                                profileImage: true
+                            }
+                        }
+                    }
+                }
             }
         })
     }
@@ -190,7 +250,7 @@ const updateMyProfile = async (req: Request, user: IJWTPayload) => {
         }
 
         // not to be update payload
-        if(req.body.email || req.body.password || req.body.role || req.body.status || req.body.interests) {
+        if (req.body.email || req.body.password || req.body.role || req.body.status || req.body.interests) {
             throw new AppError(httpStatus.FORBIDDEN, `You can't update ${req.body.email || req.body.password || req.body.role || req.body.status || req.body.interests}!`);
         }
 
@@ -220,7 +280,7 @@ const updateMyProfile = async (req: Request, user: IJWTPayload) => {
 
         // Prepare update data
         const updateData: Partial<User> = {};
-        
+
         if (req.body.fullName) updateData.fullName = req.body.fullName;
         if (req.body.bio) updateData.bio = req.body.bio;
         if (req.body.city) updateData.city = req.body.city;
