@@ -1,4 +1,5 @@
 
+import EventsFilter from "@/components/modules/events/EventsFilter";
 import EventCard from "@/components/shared/EventCard";
 import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
 
@@ -23,6 +24,7 @@ export default async function EventsPage() {
             <div className="py-4 flex justify-center text-center">
                 <ManagementPageHeader title="Explore Latest Events" description="Discover the latest events and activities happening around you." />
             </div>
+            <EventsFilter />
 
             {/* Grid */}
                 <EventCard events={events} />
