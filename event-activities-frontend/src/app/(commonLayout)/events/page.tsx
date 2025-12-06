@@ -2,6 +2,7 @@
 import EventsFilter from "@/components/modules/events/EventsFilter";
 import EventCard from "@/components/shared/EventCard";
 import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
+import ManagementPagination from "@/components/shared/ManagementPagination";
 
 interface SearchParams {
     searchTerm?: string;
@@ -54,7 +55,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
         cache: "no-store",
     });
     const allEventsData = await allLocationsResponse.json();
-    
+
     // Get unique locations from all events
     const allLocations = allEventsData?.data?.data?.map((event: any) => event.location) || [];
     const uniqueLocations = [...new Set(allLocations)];
@@ -62,7 +63,6 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
     // Get unique event types from all events
     const allTypes = allEventsData?.data?.data?.map((event: any) => event.type) || [];
     const uniqueTypes = [...new Set(allTypes)];
-
 
     return (
         <section className="max-w-7xl mx-auto px-4">
@@ -95,6 +95,11 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
                     <p className="text-gray-400 text-sm mt-2">Try adjusting your filters</p>
                 </div>
             )}
+
+            <ManagementPagination
+                currentPage={events?.data?.meta?.page || 1}
+                totalPages={events?.data?.meta?.page || 1}
+            />
 
         </section>
     )
