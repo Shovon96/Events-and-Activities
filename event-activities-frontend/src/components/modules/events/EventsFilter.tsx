@@ -5,16 +5,27 @@ import RefreshButton from "@/components/shared/RefreshButton";
 import SearchFilter from "@/components/shared/SearchFilter";
 import SelectFilter from "@/components/shared/SelectFilter";
 
-const EventsFilter = () => {
+interface EventsFilterProps {
+    locations: any;
+    types: any
+}
+
+const EventsFilter = ({ locations, types }: EventsFilterProps) => {
     return (
-        <div className="space-y-3">
-            {/* Row 1: Refresh */}
-            <div className="flex items-center gap-3">
+        <div className="bg-white rounded-xl shadow-sm border p-6 space-y-4">
+            {/* Row 1: Search and Refresh */}
+            <div className="flex flex-col md:flex-row items-center gap-3">
+                <div className="flex-1 w-full">
+                    <SearchFilter
+                        paramName="searchTerm"
+                        placeholder="Search events by name, type, description, or location..."
+                    />
+                </div>
                 <RefreshButton />
             </div>
 
             {/* Row 2: Filter Controls */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center flex-wrap gap-4">
                 {/* Status Filter */}
                 <SelectFilter
                     paramName="status"
@@ -24,37 +35,58 @@ const EventsFilter = () => {
                         { label: "Open", value: "OPEN" },
                         { label: "Full", value: "FULL" },
                         { label: "Completed", value: "COMPLETED" },
-                        { label: "Canceled", value: "CANCELLED" },
+                        { label: "Cancelled", value: "CANCELLED" },
                     ]}
                 />
 
-                {/* Event Location Filter */}
+                {/* Event Type Filter */}
+                <SelectFilter
+                    paramName="type"
+                    placeholder="Event Type"
+                    defaultValue="All Event Categories"
+                    options={
+                        Array.isArray(types)
+                            ? types.map((type: string) => ({
+                                label: type,
+                                value: type
+                            }))
+                            : []
+                    }
+                />
+
+                {/* Location Filter */}
                 <SelectFilter
                     paramName="location"
                     placeholder="Location"
-                    defaultValue="All Event Locations"
-                    options={[
-                        // fetch locations from events and place the options here
-
-                    ]}
+                    defaultValue="All Locations"
+                    options={
+                        Array.isArray(locations)
+                            ? locations.map((location: string) => ({
+                                label: location,
+                                value: location
+                            }))
+                            : []
+                    }
                 />
 
-                {/* Payment Status Filter */}
+                {/* Sort By */}
                 <SelectFilter
-                    paramName="paymentStatus"
-                    placeholder="Payment Status"
-                    defaultValue="All Payment Statuses"
+                    paramName="sortBy"
+                    placeholder="Sort By"
+                    defaultValue="Latest"
                     options={[
-                        { label: "Paid", value: "PAID" },
-                        { label: "Unpaid", value: "UNPAID" },
+                        { label: "Event Name", value: "name" },
+                        { label: "Start Date", value: "startDate" },
+                        { label: "Price (Low to High)", value: "ticketPrice" },
+                        { label: "Created Date", value: "createdAt" },
                     ]}
                 />
 
-                {/* Patient Email Filter */}
-                <SearchFilter paramName="patientEmail" placeholder="Patient Email" />
-
-                {/* Clear Filters */}
-                <ClearFiltersButton />
+                {/* Row 3: Clear Filters */}
+                <ClearFiltersButton
+                    variant="ghost"
+                    showCount={true}
+                />
             </div>
         </div>
     );

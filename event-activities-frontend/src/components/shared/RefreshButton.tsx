@@ -29,6 +29,7 @@ const RefreshButton = ({
             variant={variant}
             onClick={handleRefresh}
             disabled={isPending}
+            className="p-6"
         >
             <RefreshCcw
                 className={`h-4 w-4 ${isPending ? "animate-spin" : ""} ${showLabel ? "mr-2" : ""

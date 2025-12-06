@@ -56,7 +56,7 @@ const getSingleEvent = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllEvents = catchAsync(async (req: Request, res: Response) => {
-    const userFilterableFields = ["name", "type", "location", "startDate", "endDate", "searchTerm"];
+    const userFilterableFields = ["name", "type", "status", "location", "startDate", "endDate", "searchTerm"];
     const filters = filterPick(req?.query, userFilterableFields) // searching , filtering
     const options = filterPick(req.query, ["page", "limit", "sortBy", "sortOrder"]) // pagination and sorting
 
