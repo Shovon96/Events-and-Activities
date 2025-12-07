@@ -52,32 +52,32 @@ const userMenuItems: SidebarItem[] = [
 const hostMenuItems: SidebarItem[] = [
     {
         label: "Dashboard",
-        href: "/dashboard",
+        href: "/host/dashboard",
         icon: LayoutDashboard,
     },
     {
         label: "My Events",
-        href: "/dashboard/my-hosted-events",
+        href: "/host/dashboard/my-hosted-events",
         icon: CalendarCog,
     },
     {
         label: "Upcoming Events",
-        href: "/dashboard/upcoming-hosted",
+        href: "/host/dashboard/upcoming-hosted",
         icon: Calendar,
     },
     {
         label: "Past Events",
-        href: "/dashboard/past-hosted",
+        href: "/host/dashboard/past-hosted",
         icon: History,
     },
     {
         label: "Participants",
-        href: "/dashboard/participants",
+        href: "/host/dashboard/participants",
         icon: Users,
     },
     {
         label: "Revenue Tracking",
-        href: "/dashboard/revenue",
+        href: "/host/dashboard/revenue",
         icon: DollarSign,
     },
 ];

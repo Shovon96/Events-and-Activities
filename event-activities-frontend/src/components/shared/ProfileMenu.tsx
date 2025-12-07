@@ -51,7 +51,7 @@ export default function ProfileMenu({ user }: { user: User }) {
                         <p className="text-sm text-gray-400 mt-1">Role: {user?.role || 'User'}</p>
                     </div>
                     <div className="p-2">
-                        <Link href="/profile" className="block px-3 py-2 rounded hover:bg-gray-50">Profile</Link>
+                        <Link href="/my-profile" className="block px-3 py-2 rounded hover:bg-gray-50">Profile</Link>
                         <Link href={user?.role === 'HOST' ? '/host/dashboard' : user?.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard'} className="block px-3 py-2 rounded hover:bg-gray-50">Dashboard</Link>
                         <div className="py-1">
                             <LogoutButton />

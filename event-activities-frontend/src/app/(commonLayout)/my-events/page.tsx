@@ -3,8 +3,15 @@ import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
 import { getUserInfo } from "@/lib/getUserSession";
 import { serverFetch } from "@/lib/serverFetch";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default async function MyEventsPage() {
+
+    const user = await getUserInfo();
+
+    if (!user) {
+        redirect("/login");
+    }
 
     const response = await serverFetch.get("/participants/my-events", {
         cache: "no-store",
@@ -17,7 +24,6 @@ export default async function MyEventsPage() {
     const events = participantsData?.data?.map((participant: any) => participant.event) || [];
 
     // Get current user session
-    const user = await getUserInfo();
     const currentUserId = user?.id;
 
     // Format data to match EventCard expected structure

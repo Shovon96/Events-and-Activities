@@ -208,6 +208,18 @@ const getMyProfile = async (user: IJWTPayload) => {
                         name: true,
                         status: true,
                         ticketPrice: true,
+                        startDate: true,
+                        endDate: true,
+                        location: true,
+                        maxParticipants: true,
+                        participants: {
+                            select: {
+                                id: true,
+                                userId: true,
+                                eventId: true,
+                                paymentStatus: true
+                            }
+                        },
                         host: {
                             select: {
                                 id: true,

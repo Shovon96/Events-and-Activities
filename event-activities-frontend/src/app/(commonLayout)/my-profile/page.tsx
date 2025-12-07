@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { serverFetch } from "@/lib/serverFetch";
+import { getUserInfo } from "@/lib/getUserSession";
+import { redirect } from "next/navigation";
 
 interface HostEvent {
     id: string;
@@ -56,6 +58,12 @@ interface ProfileData {
 
 export default async function MyProfilePage() {
 
+    const user = await getUserInfo();
+
+    if (!user) {
+        redirect("/login");
+    }
+
     const response = await serverFetch.get("/users/my-profile", {
         cache: "no-store",
         next: { tags: ["my-profile"] }
@@ -88,8 +96,8 @@ export default async function MyProfilePage() {
                                 )}
                                 <Badge
                                     className={`absolute bottom-2 right-2 ${profile?.status === "ACTIVE"
-                                            ? "bg-green-500"
-                                            : "bg-gray-500"
+                                        ? "bg-green-500"
+                                        : "bg-gray-500"
                                         }`}
                                 >
                                     {profile?.status}
@@ -180,10 +188,10 @@ export default async function MyProfilePage() {
                                                         </h3>
                                                         <Badge
                                                             className={`ml-2 ${event.status === "OPEN"
-                                                                    ? "bg-green-500"
-                                                                    : event.status === "CLOSED"
-                                                                        ? "bg-red-500"
-                                                                        : "bg-yellow-500"
+                                                                ? "bg-green-500"
+                                                                : event.status === "CLOSED"
+                                                                    ? "bg-red-500"
+                                                                    : "bg-yellow-500"
                                                                 }`}
                                                         >
                                                             {event.status}
@@ -236,8 +244,8 @@ export default async function MyProfilePage() {
                                                         </h3>
                                                         <Badge
                                                             className={`ml-2 ${joined.paymentStatus === "PAID"
-                                                                    ? "bg-green-500"
-                                                                    : "bg-yellow-500"
+                                                                ? "bg-green-500"
+                                                                : "bg-yellow-500"
                                                                 }`}
                                                         >
                                                             {joined.paymentStatus}

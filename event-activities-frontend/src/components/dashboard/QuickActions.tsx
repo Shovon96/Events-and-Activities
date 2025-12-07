@@ -39,7 +39,7 @@ export default function QuickActions({ role }: QuickActionsProps) {
                     {role === "HOST" && (
                         <>
                             <Link
-                                href="/dashboard/my-hosted-events"
+                                href="/host/dashboard/my-hosted-events"
                                 className="p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-all"
                             >
                                 <h3 className="font-semibold text-gray-800">Create Event</h3>
@@ -48,7 +48,7 @@ export default function QuickActions({ role }: QuickActionsProps) {
                                 </p>
                             </Link>
                             <Link
-                                href="/dashboard/participants"
+                                href="/host/dashboard/participants"
                                 className="p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-all"
                             >
                                 <h3 className="font-semibold text-gray-800">Manage Participants</h3>
@@ -57,7 +57,7 @@ export default function QuickActions({ role }: QuickActionsProps) {
                                 </p>
                             </Link>
                             <Link
-                                href="/dashboard/revenue"
+                                href="/host/dashboard/revenue"
                                 className="p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-all"
                             >
                                 <h3 className="font-semibold text-gray-800">Revenue Report</h3>

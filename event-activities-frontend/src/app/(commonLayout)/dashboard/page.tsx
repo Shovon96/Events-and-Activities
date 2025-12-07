@@ -2,7 +2,6 @@
 import { getUserInfo } from "@/lib/getUserSession";
 import { serverFetch } from "@/lib/serverFetch";
 import UserDashboardStats from "@/components/dashboard/UserDashboardStats";
-import HostDashboardStats from "@/components/dashboard/HostDashboardStats";
 import AdminDashboardStats from "@/components/dashboard/AdminDashboardStats";
 import QuickActions from "@/components/dashboard/QuickActions";
 
@@ -30,16 +29,6 @@ export default async function DashboardPage() {
         const paymentsResult = await res.json();
         dashboardData = result.data || [];
         payments = paymentsResult.data || [];
-    } 
-    
-    else if (user?.role === "HOST") {
-        // Fetch host's profile with hosted events
-        const response = await serverFetch.get("/users/my-profile", {
-            cache: "no-store",
-            next: { tags: ["my-profile"] }
-        });
-        const result = await response.json();
-        dashboardData = result.data || {};
     } 
     
     else if (user?.role === "ADMIN") {
@@ -70,18 +59,13 @@ export default async function DashboardPage() {
                 <UserDashboardStats dashboardData={dashboardData} payments={payments} />
             )}
 
-            {/* HOST Dashboard */}
-            {user?.role === "HOST" && (
-                <HostDashboardStats dashboardData={dashboardData} />
-            )}
-
             {/* ADMIN Dashboard */}
             {user?.role === "ADMIN" && (
                 <AdminDashboardStats dashboardData={dashboardData} />
             )}
 
             {/* Quick Actions */}
-            <QuickActions role={user?.role as "USER" | "HOST" | "ADMIN"} />
+            <QuickActions role={user?.role as "USER"} />
         </div>
     );
 }
