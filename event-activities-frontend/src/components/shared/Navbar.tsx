@@ -46,8 +46,8 @@ export async function Navbar() {
   const HostLinks = (
     <>
       <NavLink href="/events">Explore Events</NavLink>
-      <NavLink href="/host/events">My Hosted Events</NavLink>
-      <NavLink href="/host/create">Create Event</NavLink>
+      <NavLink href="/hosted-events">My Hosted Events</NavLink>
+      <NavLink href="/create-event">Create Event</NavLink>
       <NavLink href="/my-profile">Profile</NavLink>
       <NavLink href="/blogs">Blogs</NavLink>
       <NavLink href="/about">About</NavLink>

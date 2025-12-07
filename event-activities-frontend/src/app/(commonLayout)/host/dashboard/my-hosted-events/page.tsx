@@ -13,7 +13,6 @@ export default async function MyHostedEventsPage() {
 
     const result = await response.json();
     const hostedEvents = result.data?.hostedEvents || [];
-    console.log('hosted events', hostedEvents)
 
     return (
         <div className="space-y-6">
