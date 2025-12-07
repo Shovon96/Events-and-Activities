@@ -55,15 +55,24 @@ interface EventDetailsProps {
         participants?: Participant[];
         reviews?: EventReview[];
     };
-    currentUserId?: string; // Optional: current logged-in user ID
+    currentUser?: ICurrentUser; // Optional: current logged-in user ID
 }
 
-export default function EventDetails({ data, currentUserId }: EventDetailsProps) {
+interface ICurrentUser {
+    id: string;
+    email: string;
+    fullName: string;
+    role: string;
+    profileImage?: string | null;
+}
+
+export default function EventDetails({ data, currentUser }: EventDetailsProps) {
     const event = data;
-    
+    const currentUserId = currentUser?.id;
+
     // Check if current user has joined this event
-    const hasUserJoined = currentUserId && event.participants && Array.isArray(event.participants) 
-        ? event.participants.some(p => p.userId === currentUserId) 
+    const hasUserJoined = currentUserId && event.participants && Array.isArray(event.participants)
+        ? event.participants.some(p => p.userId === currentUserId)
         : false;
 
     // Calculate average ratings
@@ -396,7 +405,7 @@ export default function EventDetails({ data, currentUserId }: EventDetailsProps)
                                     <span className="text-sm">{event.location}</span>
                                 </div>
                                 {hasUserJoined &&
-                                <p className="text-base text-green-600">✔ You have joined this event</p>
+                                    <p className="text-base text-green-600">✔ You have already joined this event</p>
                                 }
                             </div>
 
@@ -408,6 +417,14 @@ export default function EventDetails({ data, currentUserId }: EventDetailsProps)
                                     className="w-full cursor-pointer h-14 text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
                                 >
                                     Cancel Event
+                                </Button>
+                            ) : currentUser?.role === "HOST" ? (
+                                <Button
+                                    size="lg"
+                                    variant="destructive"
+                                    className="w-full cursor-pointer h-14 text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+                                >
+                                    Remove Event
                                 </Button>
                             ) : (
                                 <Button

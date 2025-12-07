@@ -6,10 +6,10 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
     const { id } = await params
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events/${id}`);
     const result = await res.json()
-    
+
     // Get current user session
     const user = await getUserInfo();
-    const currentUserId = user?.id;
+    const currentUser = user;
 
-    return <EventDetails data={result.data} currentUserId={currentUserId} />;
+    return <EventDetails data={result.data} currentUser={currentUser} />;
 }
