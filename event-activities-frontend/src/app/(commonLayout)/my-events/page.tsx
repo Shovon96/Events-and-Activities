@@ -23,9 +23,6 @@ export default async function MyEventsPage() {
     // Extract events from participants data
     const events = participantsData?.data?.map((participant: any) => participant.event) || [];
 
-    // Get current user session
-    const currentUserId = user?.id;
-
     // Format data to match EventCard expected structure
     const formattedData = {
         data: {
@@ -51,7 +48,7 @@ export default async function MyEventsPage() {
 
             {/* Events Grid */}
             {events.length > 0 ? (
-                <EventCard events={formattedData} currentUserId={currentUserId} />
+                <EventCard events={formattedData} currentUser={user} />
             ) : (
                 <div className="py-20 text-center">
                     <p className="text-gray-500 text-lg mb-4">You haven't joined any events yet</p>

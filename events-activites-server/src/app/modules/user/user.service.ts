@@ -210,6 +210,7 @@ const getMyProfile = async (user: IJWTPayload) => {
                         image: true,
                         type: true,
                         ticketPrice: true,
+                        description: true,
                         startDate: true,
                         endDate: true,
                         location: true,

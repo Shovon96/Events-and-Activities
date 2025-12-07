@@ -19,6 +19,7 @@ interface SearchParams {
 export default async function HostedEventsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
 
     const user = await getUserInfo();
+    // console.log(user)
 
     if (!user) {
         redirect("/login");
@@ -125,7 +126,7 @@ export default async function HostedEventsPage({ searchParams }: { searchParams:
 
             {/* Grid */}
             {paginatedEvents.length > 0 ? (
-                <EventCard events={formattedData} currentUserId={user?.id} />
+                <EventCard events={formattedData} currentUser={user} />
             ) : (
                 <div className="py-20 text-center">
                     <p className="text-gray-500 text-lg">No events found</p>

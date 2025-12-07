@@ -3,6 +3,7 @@ import EventsFilter from "@/components/modules/events/EventsFilter";
 import EventCard from "@/components/shared/EventCard";
 import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
 import ManagementPagination from "@/components/shared/ManagementPagination";
+import { getUserInfo } from "@/lib/getUserSession";
 
 interface SearchParams {
     searchTerm?: string;
@@ -18,6 +19,7 @@ interface SearchParams {
 export default async function EventsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
 
     const params = await searchParams;
+    const user =  await getUserInfo();
 
     // Build query string from search params
     const queryParams = new URLSearchParams();
@@ -88,7 +90,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
 
             {/* Grid */}
             {events?.data?.data?.length > 0 ? (
-                <EventCard events={events} />
+                <EventCard events={events} currentUser={user}/>
             ) : (
                 <div className="py-20 text-center">
                     <p className="text-gray-500 text-lg">No events found</p>
