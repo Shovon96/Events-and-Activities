@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Dialog,
     DialogContent,
@@ -20,6 +20,10 @@ interface ReviewModalProps {
     eventId: string;
     eventName: string;
     onSuccess?: () => void;
+    editMode?: boolean;
+    reviewId?: string;
+    initialRating?: number;
+    initialComment?: string;
 }
 
 export default function ReviewModal({
@@ -28,11 +32,21 @@ export default function ReviewModal({
     eventId,
     eventName,
     onSuccess,
+    editMode = false,
+    reviewId,
+    initialRating = 0,
+    initialComment = "",
 }: ReviewModalProps) {
-    const [rating, setRating] = useState(0);
+    const [rating, setRating] = useState(initialRating);
     const [hoveredRating, setHoveredRating] = useState(0);
-    const [comment, setComment] = useState("");
+    const [comment, setComment] = useState(initialComment);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Update state when props change (for edit mode)
+    useEffect(() => {
+        setRating(initialRating);
+        setComment(initialComment);
+    }, [initialRating, initialComment, isOpen]);
 
     const handleSubmit = async () => {
         if (rating === 0) {
@@ -42,24 +56,27 @@ export default function ReviewModal({
 
         setIsSubmitting(true);
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/review/post-review`,
-                {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        eventId,
-                        rating,
-                        comment: comment.trim() || undefined,
-                    }),
-                }
-            );
+            const url = editMode
+                ? `${process.env.NEXT_PUBLIC_API_URL}/review/${reviewId}`
+                : `${process.env.NEXT_PUBLIC_API_URL}/review/post-review`;
+
+            const method = editMode ? "PATCH" : "POST";
+
+            const response = await fetch(url, {
+                method,
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    eventId,
+                    rating,
+                    comment: comment.trim() || undefined,
+                }),
+            });
 
             if (response.ok) {
-                toast.success("Review submitted successfully!");
+                toast.success(editMode ? "Review updated successfully!" : "Review submitted successfully!");
                 setRating(0);
                 setComment("");
                 onClose();
@@ -68,11 +85,11 @@ export default function ReviewModal({
                 }
             } else {
                 const error = await response.json();
-                toast.error(error.message || "Failed to submit review");
+                toast.error(error.message || `Failed to ${editMode ? 'update' : 'submit'} review`);
             }
         } catch (error) {
-            console.error("Error submitting review:", error);
-            toast.error("An error occurred while submitting the review");
+            console.error(`Error ${editMode ? 'updating' : 'submitting'} review:`, error);
+            toast.error(`An error occurred while ${editMode ? 'updating' : 'submitting'} the review`);
         } finally {
             setIsSubmitting(false);
         }
@@ -80,9 +97,9 @@ export default function ReviewModal({
 
     const handleClose = () => {
         if (!isSubmitting) {
-            setRating(0);
+            setRating(editMode ? initialRating : 0);
             setHoveredRating(0);
-            setComment("");
+            setComment(editMode ? initialComment : "");
             onClose();
         }
     };
@@ -92,10 +109,10 @@ export default function ReviewModal({
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-bold text-gray-800">
-                        Write a Review
+                        {editMode ? "Edit Review" : "Write a Review"}
                     </DialogTitle>
                     <DialogDescription className="text-gray-600">
-                        Share your experience about <span className="font-semibold">{eventName}</span>
+                        {editMode ? "Update your review for" : "Share your experience about"} <span className="font-semibold">{eventName}</span>
                     </DialogDescription>
                 </DialogHeader>
 
@@ -165,7 +182,7 @@ export default function ReviewModal({
                         disabled={isSubmitting || rating === 0}
                         className="bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 cursor-pointer"
                     >
-                        {isSubmitting ? "Submitting..." : "Submit Review"}
+                        {isSubmitting ? (editMode ? "Updating..." : "Submitting...") : (editMode ? "Update Review" : "Submit Review")}
                     </Button>
                 </DialogFooter>
             </DialogContent>

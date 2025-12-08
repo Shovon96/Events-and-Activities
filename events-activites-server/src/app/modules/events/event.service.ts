@@ -286,6 +286,7 @@ const getSingleEvent = async (id: string) => {
                     comment: true,
                     author: {
                         select: {
+                            id: true,
                             fullName: true,
                             profileImage: true
                         }

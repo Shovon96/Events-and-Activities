@@ -31,6 +31,7 @@ interface EventReview {
     rating: string;
     comment?: string;
     author: {
+        id: string;
         fullName: string;
         profileImage?: string | null;
     };
@@ -249,6 +250,7 @@ export default function EventDetails({ data, currentUser }: EventDetailsProps) {
                         <EventReviews
                             event={event}
                             eventAverageRating={eventAverageRating}
+                            currentUser={currentUser}
                         />
 
                     </div>
