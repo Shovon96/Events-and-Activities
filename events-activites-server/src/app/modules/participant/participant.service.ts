@@ -130,6 +130,37 @@ const joinEvent = async (eventId: string, user: IJWTPayload) => {
             });
         }
 
+        // 🚨 If NOT paid → schedule DELETE in 2 minutes
+        const isPaid = session.payment_status === "paid";
+        const paymentId = session.metadata?.paymentId;
+        const userId = session.metadata?.userId!;
+        if (!isPaid) {
+            setTimeout(async () => {
+                try {
+                    const payment = await prisma.payment.findUnique({
+                        where: { id: paymentId }
+                    });
+
+                    if (payment && payment.paymentStatus !== "PAID") {
+
+                        await prisma.$transaction(async (tx) => {
+                            await tx.participant.delete({
+                                where: {
+                                    userId_eventId: { userId, eventId }
+                                }
+                            });
+
+                            await tx.payment.delete({
+                                where: { id: paymentId }
+                            });
+                        });
+                    }
+                } catch (err) {
+                    console.error("❌ Cleanup error:", err);
+                }
+            }, 2 * 60 * 1000); // 2 minutes
+        }
+
         return {
             paymentUrl: session.url,
             participant: participant

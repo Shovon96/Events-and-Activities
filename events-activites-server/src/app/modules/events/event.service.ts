@@ -275,7 +275,8 @@ const getSingleEvent = async (id: string) => {
                 select: {
                     id: true,
                     userId: true,
-                    eventId: true
+                    eventId: true,
+                    paymentStatus: true,
                 }
             },
             reviews: {
@@ -350,6 +351,14 @@ const getAllEvents = async (params: any, options: IOptions) => {
                     email: true,
                     fullName: true,
                     role: true
+                }
+            },
+            participants: {
+                select: {
+                    id: true,
+                    userId: true,
+                    eventId: true,
+                    paymentStatus: true
                 }
             }
         },

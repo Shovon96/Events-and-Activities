@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Calendar, Clock, MapPin, Users, User, Mail, Tag, Star } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface HostReview {
     id: string;
@@ -35,6 +37,7 @@ interface Participant {
     id: string;
     userId: string;
     eventId: string;
+    paymentStatus: string;
 }
 
 interface EventDetailsProps {
@@ -69,6 +72,7 @@ interface ICurrentUser {
 export default function EventDetails({ data, currentUser }: EventDetailsProps) {
     const event = data;
     const currentUserId = currentUser?.id;
+    const router = useRouter();
 
     // Check if current user has joined this event
     const hasUserJoined = currentUserId && event.participants && Array.isArray(event.participants)
@@ -131,6 +135,42 @@ export default function EventDetails({ data, currentUser }: EventDetailsProps) {
             }),
         });
     }, [event.startDate, event.endDate]);
+
+
+    const isPaymentComplete = event?.participants?.some(p => p.userId === currentUserId && p.paymentStatus === "PAID");
+
+    // Handle payments
+    const handlePayment = async (eventId: string) => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}/join`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ eventId }),
+            });
+
+            const result = await res.json();
+
+            if (!result?.data?.paymentUrl) {
+                toast.error("Payment URL not found try gain 2min later");
+                throw new Error("Payment URL not found");
+            }
+
+            if (result?.error) {
+                toast.error(result?.error);
+                throw new Error(result?.error);
+            }
+
+            window.location.href = result?.data?.paymentUrl
+
+        } catch (error) {
+            console.error("Payment error:", error);
+        }
+    };
+
+
 
     return (
         <div className="min-h-screen bg-linear-to-br from-purple-50 via-white to-pink-50">
@@ -404,13 +444,13 @@ export default function EventDetails({ data, currentUser }: EventDetailsProps) {
                                     <MapPin className="w-5 h-5 text-purple-500" />
                                     <span className="text-sm">{event.location}</span>
                                 </div>
-                                {hasUserJoined &&
+                                {hasUserJoined && isPaymentComplete &&
                                     <p className="text-base text-green-600">✔ You have already joined this event</p>
                                 }
                             </div>
 
                             {/* CTA Button */}
-                            {hasUserJoined ? (
+                            {hasUserJoined && isPaymentComplete ? (
                                 <Button
                                     size="lg"
                                     variant="destructive"
@@ -427,12 +467,19 @@ export default function EventDetails({ data, currentUser }: EventDetailsProps) {
                                     Remove Event
                                 </Button>
                             ) : (
-                                <Button
-                                    size="lg"
-                                    className="w-full cursor-pointer h-14 text-lg font-semibold bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all"
-                                >
-                                    Join This Event
-                                </Button>
+                                <>
+                                    <Button
+                                        onClick={() => handlePayment(event.id)}
+                                        size="lg"
+                                        className="w-full cursor-pointer h-14 text-lg font-semibold bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all"
+                                    >
+                                        Join This Event
+                                    </Button>
+                                    <p className="text-sm pt-2 text-red-500">
+                                        NOTE: For joining event after redirect to payment page, you have 2 minutes to complete the payment.
+                                    </p>
+
+                                </>
                             )}
 
                             {/* Additional Info */}
