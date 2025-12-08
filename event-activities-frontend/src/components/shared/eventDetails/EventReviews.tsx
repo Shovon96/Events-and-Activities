@@ -1,4 +1,10 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
+import ReviewModal from "@/components/modals/ReviewModal";
+import { useRouter } from "next/navigation";
 
 interface EventReview {
     id: string;
@@ -10,25 +16,56 @@ interface EventReview {
     };
 }
 
-interface EventReviewsProps {
-    reviews: EventReview[];
-    eventAverageRating: string | number;
+interface IEventProps {
+    event: {
+        id: string;
+        name: string;
+        type: string;
+        description: string;
+        image: string;
+        location: string;
+        startDate: string;
+        endDate: string;
+        minParticipants: number;
+        maxParticipants: number;
+        ticketPrice: number;
+        status: string;
+        reviews?: EventReview[];
+    },
+    eventAverageRating: string | number
 }
 
-export default function EventReviews({ reviews, eventAverageRating }: EventReviewsProps) {
-    if (!reviews || reviews.length === 0) return null;
+export default function EventReviews({ event, eventAverageRating }: IEventProps) {
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+    const router = useRouter();
+    const reviews = event.reviews || [];
+
+    const handleReviewSuccess = () => {
+        router.refresh();
+    };
 
     return (
+        <>
         <div className="bg-white rounded-2xl shadow-lg p-8">
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Event Reviews</h2>
-                <div className="flex items-center gap-2 bg-yellow-50 px-4 py-2 rounded-xl">
-                    <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                    <span className="text-xl font-bold text-gray-800">{eventAverageRating}</span>
-                    <span className="text-sm text-gray-600">
-                        ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
-                    </span>
+                <div className="flex items-center gap-3">
+                    <h2 className="text-2xl font-bold text-gray-800">Event Reviews</h2>
+                    <div className="flex items-center gap-2 bg-yellow-50 px-4 py-1 rounded-xl">
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-lg font-bold text-gray-800">{eventAverageRating}</span>
+                        <span className="text-sm text-gray-600">
+                            ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
+                        </span>
+                    </div>
                 </div>
+
+                {/* create review */}
+                <Button 
+                    onClick={() => setIsReviewModalOpen(true)}
+                    // disabled={event.status !== "COMPLETED"}
+                    className="bg-linear-to-br from-purple-500 to-pink-500 text-white px-4 py-2 rounded-md cursor-pointer font-semibold hover:shadow-lg transition-shadow">
+                    Write a Review
+                </Button>
             </div>
 
             {/* Horizontal Scrollable Reviews */}
@@ -83,5 +120,15 @@ export default function EventReviews({ reviews, eventAverageRating }: EventRevie
                 </div>
             )}
         </div>
+
+        {/* Review Modal */}
+        <ReviewModal
+            isOpen={isReviewModalOpen}
+            onClose={() => setIsReviewModalOpen(false)}
+            eventId={event.id}
+            eventName={event.name}
+            onSuccess={handleReviewSuccess}
+        />
+        </>
     );
 }

@@ -51,9 +51,9 @@ const postReview = async (
     }
 
     // Is Event completed
-    // if (event.status !== EventStatus.COMPLETED) {
-    //     throw new AppError(httpStatus.BAD_REQUEST, "Event is not completed. You can't review now!");
-    // }
+    if (event.status !== EventStatus.COMPLETED) {
+        throw new AppError(httpStatus.BAD_REQUEST, "This Event is not completed. You can't review now!");
+    }
 
     // 3️⃣ Enforce 1 review per event
     const exist = await prisma.review.findFirst({

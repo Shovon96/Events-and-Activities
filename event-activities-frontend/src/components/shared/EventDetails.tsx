@@ -247,7 +247,7 @@ export default function EventDetails({ data, currentUser }: EventDetailsProps) {
 
                         {/* Reviews Section */}
                         <EventReviews
-                            reviews={event.reviews || []}
+                            event={event}
                             eventAverageRating={eventAverageRating}
                         />
 
