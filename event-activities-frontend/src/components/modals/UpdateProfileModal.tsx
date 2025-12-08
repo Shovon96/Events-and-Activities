@@ -172,7 +172,7 @@ export default function UpdateProfileModal({
                     <div className="space-y-2">
                         <Label htmlFor="profileImage">Profile Image</Label>
                         {imagePreview ? (
-                            <div className="relative w-32 h-32 border border-gray-300 rounded-full overflow-hidden">
+                            <div className="relative w-32 h-32 border border-gray-300 rounded-lg overflow-hidden">
                                 <Image
                                     src={imagePreview}
                                     alt="Profile preview"
@@ -219,7 +219,7 @@ export default function UpdateProfileModal({
                         <Button
                             type="submit"
                             disabled={isSubmitting}
-                            className="bg-purple-600 hover:bg-purple-700"
+                            className="bg-primary hover:bg-primary/90 cursor-pointer"
                         >
                             {isSubmitting ? "Updating..." : "Update Profile"}
                         </Button>

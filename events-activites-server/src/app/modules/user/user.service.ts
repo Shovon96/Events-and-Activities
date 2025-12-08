@@ -265,8 +265,8 @@ const updateMyProfile = async (req: Request, user: IJWTPayload) => {
         }
 
         // not to be update payload
-        if (req.body.email || req.body.password || req.body.role || req.body.status || req.body.interests) {
-            throw new AppError(httpStatus.FORBIDDEN, `You can't update ${req.body.email || req.body.password || req.body.role || req.body.status || req.body.interests}!`);
+        if (req.body.email || req.body.password || req.body.role || req.body.status) {
+            throw new AppError(httpStatus.FORBIDDEN, `You can't update ${req.body.email || req.body.password || req.body.role || req.body.status}!`);
         }
 
         // Extract old image public_id if exists

@@ -154,7 +154,7 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
                         <div>
                             <Button
                                 onClick={() => setIsUpdateOpen(true)}
-                                className="bg-purple-600 hover:bg-purple-700"
+                                className="bg-primary hover:bg-primary/90 cursor-pointer"
                             >
                                 <Edit className="w-4 h-4 mr-2" />
                                 Update Info
