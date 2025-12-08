@@ -187,8 +187,20 @@ const leaveEvent = async (eventId: string, user: IJWTPayload) => {
         }
     });
 
+    // Find payment record
+    const payment = await prisma.payment.findFirst({
+        where: {
+            userId: userInfo.id,
+            eventId: eventId
+        }
+    });
+
     if (!participant) {
         throw new AppError(httpStatus.NOT_FOUND, "You are not a participant of this event!");
+    }
+
+    if (!payment) {
+        throw new AppError(httpStatus.NOT_FOUND, "Payment not found!");
     }
 
     // Get event details
@@ -208,6 +220,10 @@ const leaveEvent = async (eventId: string, user: IJWTPayload) => {
     const result = await prisma.$transaction(async (tx) => {
         await tx.participant.delete({
             where: { id: participant.id }
+        });
+
+        await tx.payment.delete({
+            where: { id: payment.id }
         });
 
         // Update event status to OPEN if it was FULL
