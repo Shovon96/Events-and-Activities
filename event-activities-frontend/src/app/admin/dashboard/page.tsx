@@ -1,13 +1,11 @@
+import AdminDashboardClient from "@/components/admin/AdminDashboardClient";
+import { serverFetch } from "@/lib/serverFetch";
 
-export default function AdminDashboardPage() {
-    return (
-        <div>
-            <h1 className="text-3xl font-bold text-gray-800">
-                Welcome back, admin!
-            </h1>
-            <p className="text-gray-600 mt-2">
-                Here's what's happening with your account today.
-            </p>
-        </div>
-    )
+export default async function AdminDashboardPage() {
+    // Fetch admin dashboard data
+    const response = await serverFetch.get("/admin/dashboard-stats");
+    const data = await response.json();
+    const dashboardData = data?.data || {};
+
+    return <AdminDashboardClient data={dashboardData} />;
 }
