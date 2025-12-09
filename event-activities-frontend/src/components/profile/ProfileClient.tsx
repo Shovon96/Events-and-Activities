@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import UpdateProfileModal from "../modals/UpdateProfileModal";
+import ChangePasswordModal from "../modals/ChangePasswordModal";
 
 interface ProfileData {
     id: string;
@@ -28,6 +29,7 @@ interface ProfileClientProps {
 
 export default function ProfileClient({ profile }: ProfileClientProps) {
     const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+    const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
     const router = useRouter();
 
     const handleUpdateProfile = async (data: any, file?: File) => {
@@ -82,11 +84,10 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
                                 </div>
                             )}
                             <Badge
-                                className={`absolute bottom-2 right-2 ${
-                                    profile?.status === "ACTIVE"
+                                className={`absolute bottom-2 right-2 ${profile?.status === "ACTIVE"
                                         ? "bg-green-500"
                                         : "bg-gray-500"
-                                }`}
+                                    }`}
                             >
                                 {profile?.status}
                             </Badge>
@@ -151,13 +152,19 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
                         </div>
 
                         {/* Update Button */}
-                        <div>
+                        <div className="flex flex-col gap-2">
                             <Button
                                 onClick={() => setIsUpdateOpen(true)}
                                 className="bg-primary hover:bg-primary/90 cursor-pointer"
                             >
                                 <Edit className="w-4 h-4 mr-2" />
                                 Update Info
+                            </Button>
+                            <Button
+                                onClick={() => setIsChangePasswordOpen(true)}
+                                className="bg-transparent text-blue-600 underline hover:text-blue-800 hover:bg-transparent p-1 cursor-pointer "
+                            >
+                                Change Password
                             </Button>
                         </div>
                     </div>
@@ -170,6 +177,12 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
                 onClose={() => setIsUpdateOpen(false)}
                 onSubmit={handleUpdateProfile}
                 initialData={profile}
+            />
+
+            {/* Change Password Modal */}
+            <ChangePasswordModal
+                isOpen={isChangePasswordOpen}
+                onClose={() => setIsChangePasswordOpen(false)}
             />
         </>
     );
