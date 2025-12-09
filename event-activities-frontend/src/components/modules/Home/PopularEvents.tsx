@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import EventCard from "@/components/shared/EventCard";
+import Link from "next/link";
 
 const events = {
     data: {
         data: [
             {
-                id: "1",
+                id: "#1",
                 name: "Summer Music Festival 2024",
                 type: "Music",
                 ticketPrice: 149,
@@ -15,7 +16,7 @@ const events = {
                 image: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=600&q=80",
             },
             {
-                id: "2",
+                id: "#2",
                 name: "Tech Innovation Summit",
                 type: "Tech",
                 ticketPrice: 299,
@@ -25,7 +26,7 @@ const events = {
                 image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80",
             },
             {
-                id: "3",
+                id: "#3",
                 name: "Artisan Food & Wine Expo",
                 type: "Food",
                 ticketPrice: 75,
@@ -35,7 +36,7 @@ const events = {
                 image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
             },
             {
-                id: "4",
+                id: "#4",
                 name: "Championship Basketball Finals",
                 type: "Sports",
                 ticketPrice: 199,
@@ -45,7 +46,7 @@ const events = {
                 image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&q=80",
             },
             {
-                id: "5",
+                id: "#5",
                 name: "Contemporary Art Exhibition",
                 type: "Arts",
                 ticketPrice: 35,
@@ -55,7 +56,7 @@ const events = {
                 image: "https://images.unsplash.com/photo-1531243269054-5ebf6f34081e?w=600&q=80",
             },
             {
-                id: "6",
+                id: "#6",
                 name: "Wellness & Yoga Retreat",
                 type: "Wellness",
                 ticketPrice: 450,
@@ -80,9 +81,12 @@ export default function PopularEvents() {
                     </p>
                     <h2 className="text-4xl font-bold">Popular Events</h2>
                 </div>
-                <Button variant={"outline"} className="cursor-pointer hover:bg-primary/10">
+                <Link
+                    href="/events"
+                    className="text-sm font-semibold text-primary hover:underline"
+                    >
                     View All Events →
-                </Button>
+                </Link>
             </div>
 
             {/* Grid */}

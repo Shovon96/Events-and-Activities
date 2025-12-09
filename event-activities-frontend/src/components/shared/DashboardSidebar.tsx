@@ -85,22 +85,22 @@ const hostMenuItems: SidebarItem[] = [
 const adminMenuItems: SidebarItem[] = [
     {
         label: "Dashboard",
-        href: "/dashboard",
+        href: "/admin/dashboard",
         icon: LayoutDashboard,
     },
     {
         label: "User Management",
-        href: "/dashboard/users",
+        href: "/admin/dashboard/users",
         icon: UserCog,
     },
     {
         label: "Host Management",
-        href: "/dashboard/hosts",
+        href: "/admin/dashboard/hosts",
         icon: ShieldCheck,
     },
     {
         label: "Event Management",
-        href: "/dashboard/events",
+        href: "/admin/dashboard/events",
         icon: CalendarCheck,
     },
 ];

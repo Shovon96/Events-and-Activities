@@ -9,13 +9,13 @@ export default async function DashboardLayout({
 }) {
     const user = await getUserInfo();
 
-    if (user.role !== "HOST") {
+    if (user.role !== "ADMIN") {
         redirect("/login");
     }
 
     return (
         <div className="flex min-h-screen bg-gray-50">
-            <DashboardSidebar role={user.role as "HOST"} />
+            <DashboardSidebar role={user.role as "ADMIN"} />
             <main className="flex-1 p-8">{children}</main>
         </div>
     );

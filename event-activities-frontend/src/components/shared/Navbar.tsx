@@ -17,7 +17,7 @@ export async function Navbar() {
     <>
       <NavLink href="/events">Explore Events</NavLink>
       <NavLink href="/become-host">Become a Host</NavLink>
-      <NavLink href="/blogs">Blogs</NavLink>
+      {/* <NavLink href="/blogs">Blogs</NavLink> */}
       <NavLink href="/about">About</NavLink>
       <NavLink href="/contact">Contact</NavLink>
 
@@ -34,7 +34,7 @@ export async function Navbar() {
       <NavLink href="/events">Explore Events</NavLink>
       <NavLink href="/my-events">My Events</NavLink>
       <NavLink href="/my-profile">Profile</NavLink>
-      <NavLink href="/blogs">Blogs</NavLink>
+      {/* <NavLink href="/blogs">Blogs</NavLink> */}
       <NavLink href="/about">About</NavLink>
       <NavLink href="/contact">Contact</NavLink>
       <div className="flex items-center gap-3">
@@ -49,7 +49,7 @@ export async function Navbar() {
       <NavLink href="/hosted-events">My Hosted Events</NavLink>
       {/* <NavLink href="/create-event">Create Event</NavLink> */}
       <NavLink href="/my-profile">Profile</NavLink>
-      <NavLink href="/blogs">Blogs</NavLink>
+      {/* <NavLink href="/blogs">Blogs</NavLink> */}
       <NavLink href="/about">About</NavLink>
       <NavLink href="/contact">Contact</NavLink>
       <div className="flex items-center gap-3">
@@ -63,8 +63,10 @@ export async function Navbar() {
       <NavLink href="/admin/dashboard">Dashboard</NavLink>
       <NavLink href="/admin/users">Users</NavLink>
       <NavLink href="/admin/hosts">Hosts</NavLink>
-      <NavLink href="/admin/events">Events</NavLink>
+      <NavLink href="/events">Events</NavLink>
       <NavLink href="/my-profile">Profile</NavLink>
+      <NavLink href="/about">About</NavLink>
+      <NavLink href="/contact">Contact</NavLink>
       <div className="flex items-center gap-3">
         <ProfileMenu user={userInfo} />
       </div>
