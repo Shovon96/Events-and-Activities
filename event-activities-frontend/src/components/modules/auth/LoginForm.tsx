@@ -44,11 +44,12 @@ export default function LoginForm() {
             // Call server action to login
             const result = await loginUser(validatedData.email, validatedData.password);
 
+            // Check if login was successful
             if (!result.success) {
-                toast.error(result.message || "Invalid email or password.");
-                throw new Error(result.message);
+                const errorMessage = result.message || "Invalid email or password.";
+                toast.error(errorMessage);
+                throw new Error(errorMessage);
             }
-
             setSuccess("Login successful! Redirecting...");
 
             // Store user data in localStorage (optional)
@@ -71,12 +72,17 @@ export default function LoginForm() {
             }, 1000);
 
         } catch (err: any) {
-            console.error("❌ Login error:", err);
+            toast.error("Invalid email or password. Please try again.");
             if (err.name === "ZodError") {
+                // Handle Zod validation errors
                 console.error("❌ Validation errors:", err.errors);
-                setError(err.errors[0]?.message || "Validation failed");
+                const errorMessage = err.errors[0]?.message || "Validation failed";
+                setError(errorMessage);
+                toast.error(errorMessage || "Validation failed");
             } else {
-                setError(err.message || "Invalid email or password. Please try again.");
+                const errorMessage = err.message || "Invalid email or password. Please try again.";
+                setError(errorMessage);
+                toast.error(errorMessage);
             }
         } finally {
             setIsLoading(false);

@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Upload, Eye, EyeOff, X } from "lucide-react";
 import { createUserValidationSchema } from "@/zodValidations/auth.validation";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export type IUserRole = "USER" | "HOST" | "ADMIN";
 
@@ -23,7 +24,17 @@ export interface IUserCreateInput {
     role?: IUserRole;
 }
 
-export default function UserRegisterForm() {
+interface SignupFormProps {
+    role: IUserRole;
+    title?: string;
+    subtitle?: string;
+}
+
+export default function SignupForm({ 
+    role, 
+    title = "Create your account",
+    subtitle = "Start discovering amazing events near you"
+}: SignupFormProps) {
     const [form, setForm] = useState<IUserCreateInput>({
         email: "",
         password: "",
@@ -32,7 +43,7 @@ export default function UserRegisterForm() {
         profileImage: "",
         interests: [],
         city: "",
-        role: "USER",
+        role: role,
     });
     const [profilePreview, setProfilePreview] = useState<string>("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -42,7 +53,7 @@ export default function UserRegisterForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [interestsInput, setInterestsInput] = useState<string>("");
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const router = useRouter()
+    const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -60,7 +71,7 @@ export default function UserRegisterForm() {
                 bio: form.bio,
                 interests: form.interests,
                 city: form.city,
-                role: form.role,
+                role: role, // Use the role prop
             });
 
             // Create FormData for multipart/form-data request
@@ -79,7 +90,7 @@ export default function UserRegisterForm() {
                 interests: validatedData.interests || [],
                 bio: validatedData.bio || "",
                 city: validatedData.city || "",
-                role: validatedData.role,
+                role: role, // Use the role prop
             };
             formData.append("data", JSON.stringify(userData));
 
@@ -97,7 +108,10 @@ export default function UserRegisterForm() {
             if (!response.ok) {
                 throw new Error(responseData.message || "Registration failed");
             }
-            setSuccess("Account created successfully! Redirecting to login...");
+            
+            const successMessage = "Account created successfully! Redirecting to login...";
+            setSuccess(successMessage);
+            toast.success(successMessage);
 
             // Reset form
             setForm({
@@ -108,7 +122,7 @@ export default function UserRegisterForm() {
                 profileImage: "",
                 interests: [],
                 city: "",
-                role: "USER",
+                role: role,
             });
             setProfilePreview("");
             setSelectedFile(null);
@@ -118,15 +132,20 @@ export default function UserRegisterForm() {
             // Redirect to login after 2 seconds
             setTimeout(() => {
                 router.push("/login");
-            }, 2000);
+            }, 1000);
 
         } catch (err: any) {
-            console.error("❌ Registration error:", err);
+            toast.error("Validation Failed");
             if (err.name === "ZodError") {
+                // Handle Zod validation errors
                 console.error("❌ Validation errors:", err.errors);
-                setError(err.errors[0]?.message || "Validation failed");
+                const errorMessage = err.errors[0]?.message || "Validation failed";
+                setError(errorMessage);
+                toast.error(errorMessage);
             } else {
-                setError(err.message || "Something went wrong. Please try again.");
+                const errorMessage = err.message || "Something went wrong. Please try again.";
+                setError(errorMessage);
+                toast.error(errorMessage);
             }
         } finally {
             setIsLoading(false);
@@ -150,8 +169,8 @@ export default function UserRegisterForm() {
         <div className="w-full lg:w-3/5 flex items-center justify-center p-6 lg:p-12">
             <Card className="w-full max-w-xl shadow-lg rounded-3xl border-0">
                 <CardContent className="p-8">
-                    <h2 className="text-4xl font-bold mb-2 text-center text-secondary">Create your account</h2>
-                    <p className="text-gray-500 text-sm mb-8 text-center">Start discovering amazing events near you</p>
+                    <h2 className="text-4xl font-bold mb-2 text-center text-secondary">{title}</h2>
+                    <p className="text-gray-500 text-sm mb-8 text-center">{subtitle}</p>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
 

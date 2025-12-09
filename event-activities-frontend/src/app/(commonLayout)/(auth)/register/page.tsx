@@ -1,5 +1,4 @@
-
-import UserRegisterForm from "@/components/modules/auth/RegisterForm";
+import SignupForm from "@/components/modules/auth/SignupForm";
 import favicon from "@/app/favicon.ico"
 import Image from "next/image";
 
@@ -44,7 +43,11 @@ const RegisterPage = () => {
                 </div>
 
                 {/* Right Section - Form */}
-                <UserRegisterForm />
+                <SignupForm 
+                    role="USER"
+                    title="Create your account"
+                    subtitle="Start discovering amazing events near you"
+                />
             </div>
         </>
     );
