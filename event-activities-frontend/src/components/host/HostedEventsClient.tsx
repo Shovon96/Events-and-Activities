@@ -2,10 +2,16 @@
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, MapPin, DollarSign, Users, Edit, Trash2, Plus } from "lucide-react";
+import { Calendar, MapPin, DollarSign, Users, Edit, Trash2, Plus, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import EventFormModal, { IEventCreate } from "@/components/modals/EventFormModal";
 import DeleteConfirmationDialog from "@/components/modals/DeleteConfirmationDialog";
 import { useRouter } from "next/navigation";
@@ -21,7 +27,38 @@ export default function HostedEventsClient({ hostedEvents }: HostedEventsClientP
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<any>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [updatingStatusId, setUpdatingStatusId] = useState<string | null>(null);
     const router = useRouter();
+
+    const handleStatusChange = async (eventId: string, newStatus: string) => {
+        setUpdatingStatusId(eventId);
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}/status`,
+                {
+                    method: "PATCH",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ status: newStatus }),
+                }
+            );
+
+            if (response.ok) {
+                toast.success(`Event status updated to ${newStatus}`);
+                router.refresh();
+            } else {
+                const error = await response.json();
+                toast.error(error.message || "Failed to update event status");
+            }
+        } catch (error) {
+            console.error("Error updating event status:", error);
+            toast.error("An error occurred while updating event status");
+        } finally {
+            setUpdatingStatusId(null);
+        }
+    };
 
     const handleCreateEvent = async (data: IEventCreate, file?: File) => {
         try {
@@ -145,17 +182,66 @@ export default function HostedEventsClient({ hostedEvents }: HostedEventsClientP
                         <Card key={event.id} className="hover:shadow-lg transition-shadow">
                             <CardContent>
                                 <div className="flex justify-end mb-2">
-                                    <Badge
-                                        className={`${
-                                            event.status === "OPEN"
-                                                ? "bg-green-500"
-                                                : event.status === "CLOSED"
-                                                ? "bg-red-500"
-                                                : "bg-yellow-500"
-                                        }`}
-                                    >
-                                        {event.status}
-                                    </Badge>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Badge
+                                                className={`cursor-pointer hover:opacity-90 transition-opacity ${
+                                                    event.status === "OPEN"
+                                                        ? "bg-green-500 hover:bg-green-600"
+                                                        : event.status === "CANCELED"
+                                                        ? "bg-red-500 hover:bg-red-600"
+                                                        : event.status === "COMPLETED"
+                                                        ? "bg-blue-500 hover:bg-blue-600"
+                                                        : "bg-yellow-500 hover:bg-yellow-600"
+                                                }`}
+                                            >
+                                                {updatingStatusId === event.id ? "Updating..." : event.status}
+                                                <ChevronDown className="ml-1 w-3 h-3" />
+                                            </Badge>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end" className="w-40">
+                                            <DropdownMenuItem
+                                                onClick={() => handleStatusChange(event.id, "OPEN")}
+                                                disabled={event.status === "OPEN" || updatingStatusId === event.id}
+                                                className="cursor-pointer"
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2 h-2 rounded-full bg-green-500" />
+                                                    <span>OPEN</span>
+                                                </div>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                onClick={() => handleStatusChange(event.id, "FULL")}
+                                                disabled={event.status === "FULL" || updatingStatusId === event.id}
+                                                className="cursor-pointer"
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                                                    <span>FULL</span>
+                                                </div>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                onClick={() => handleStatusChange(event.id, "COMPLETED")}
+                                                disabled={event.status === "COMPLETED" || updatingStatusId === event.id}
+                                                className="cursor-pointer"
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2 h-2 rounded-full bg-blue-500" />
+                                                    <span>COMPLETED</span>
+                                                </div>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                onClick={() => handleStatusChange(event.id, "CANCELLED")}
+                                                disabled={event.status === "CANCELLED" || updatingStatusId === event.id}
+                                                className="cursor-pointer"
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2 h-2 rounded-full bg-red-500" />
+                                                    <span>CANCELED</span>
+                                                </div>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </div>
                                 <div className="mb-3">
                                     <h3 className="text-lg font-bold text-gray-800 line-clamp-2">
