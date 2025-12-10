@@ -15,7 +15,7 @@ interface UserDetailsData {
     email: string;
     fullName: string;
     role: "USER" | "HOST" | "ADMIN";
-    status: "ACTIVE" | "BLOCKED" | "DELETED";
+    status: "ACTIVE" | "INACTIVE" | "BANNED";
     profileImage?: string;
     city?: string;
     bio?: string;

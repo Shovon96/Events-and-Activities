@@ -10,7 +10,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Mail, MapPin, Calendar, User as UserIcon } from "lucide-react";
+import { MoreVertical, Mail, MapPin, Calendar, User as UserIcon, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import UserDetailsModal from "./UserDetailsModal";
@@ -20,7 +20,7 @@ interface User {
     email: string;
     fullName: string;
     role: "USER" | "HOST" | "ADMIN";
-    status: "ACTIVE" | "BLOCKED" | "DELETED";
+    status: "ACTIVE" | "INACTIVE" | "BANNED";
     profileImage?: string;
     city?: string;
     bio?: string;
@@ -45,11 +45,11 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
         setIsDetailsModalOpen(true);
     };
 
-    const handleStatusChange = async (userId: string, newStatus: "ACTIVE" | "BLOCKED") => {
+    const handleStatusChange = async (userId: string, newStatus: "ACTIVE" | "INACTIVE" | "BANNED") => {
         setUpdatingUserId(userId);
         try {
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/status`,
+                `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/status`,
                 {
                     method: "PATCH",
                     credentials: "include",
@@ -79,7 +79,7 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
         setUpdatingUserId(userId);
         try {
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/role`,
+                `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/role`,
                 {
                     method: "PATCH",
                     credentials: "include",
@@ -110,9 +110,9 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
             case "ACTIVE":
                 return "bg-green-500 hover:bg-green-600";
             case "INACTIVE":
-                return "bg-red-500 hover:bg-red-600";
+                return "bg-yellow-500 hover:bg-yellow-600";
             case "BANNED":
-                return "bg-gray-500 hover:bg-gray-600";
+                return "bg-red-500 hover:bg-red-600";
             default:
                 return "bg-gray-500 hover:bg-gray-600";
         }
@@ -229,6 +229,7 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                                                             className={`cursor-pointer ${getRoleColor(user.role)}`}
                                                         >
                                                             {updatingUserId === user.id ? "Updating..." : user.role}
+                                                            <ChevronDown/>
                                                         </Badge>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
@@ -262,6 +263,7 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                                                             className={`cursor-pointer ${getStatusColor(user.status)}`}
                                                         >
                                                             {updatingUserId === user.id ? "Updating..." : user.status}
+                                                            <ChevronDown/>
                                                         </Badge>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
@@ -276,13 +278,23 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                                                             </div>
                                                         </DropdownMenuItem>
                                                         <DropdownMenuItem
-                                                            onClick={() => handleStatusChange(user.id, "BLOCKED")}
-                                                            disabled={user.status === "BLOCKED" || updatingUserId === user.id}
+                                                            onClick={() => handleStatusChange(user.id, "INACTIVE")}
+                                                            disabled={user.status === "INACTIVE" || updatingUserId === user.id}
+                                                            className="cursor-pointer"
+                                                        >
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                                                                <span>INACTIVE</span>
+                                                            </div>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            onClick={() => handleStatusChange(user.id, "BANNED")}
+                                                            disabled={user.status === "BANNED" || updatingUserId === user.id}
                                                             className="cursor-pointer"
                                                         >
                                                             <div className="flex items-center gap-2">
                                                                 <div className="w-2 h-2 rounded-full bg-red-500" />
-                                                                <span>BLOCKED</span>
+                                                                <span>BANNED</span>
                                                             </div>
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
@@ -302,14 +314,11 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
-                                                        <DropdownMenuItem 
+                                                        <DropdownMenuItem
                                                             className="cursor-pointer"
                                                             onClick={() => handleViewDetails(user.id)}
                                                         >
                                                             View Details
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem className="cursor-pointer text-secondary">
-                                                            Update {userType === "USER" ? "User" : "Host"}
                                                         </DropdownMenuItem>
                                                         <DropdownMenuItem className="cursor-pointer text-red-600">
                                                             Delete {userType === "USER" ? "User" : "Host"}
@@ -356,14 +365,11 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DropdownMenuItem 
+                                        <DropdownMenuItem
                                             className="cursor-pointer"
                                             onClick={() => handleViewDetails(user.id)}
                                         >
                                             View Details
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem className="cursor-pointer text-secondary">
-                                            Update {userType === "USER" ? "User" : "Host"}
                                         </DropdownMenuItem>
                                         <DropdownMenuItem className="cursor-pointer text-red-600">
                                             Delete {userType === "USER" ? "User" : "Host"}
@@ -388,6 +394,7 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                                     <DropdownMenuTrigger asChild>
                                         <Badge className={`cursor-pointer ${getRoleColor(user.role)}`}>
                                             {updatingUserId === user.id ? "Updating..." : user.role}
+                                            <ChevronDown/>
                                         </Badge>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="start">
@@ -418,6 +425,7 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                                     <DropdownMenuTrigger asChild>
                                         <Badge className={`cursor-pointer ${getStatusColor(user.status)}`}>
                                             {updatingUserId === user.id ? "Updating..." : user.status}
+                                            <ChevronDown />
                                         </Badge>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="start">
@@ -432,13 +440,23 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                                             </div>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
-                                            onClick={() => handleStatusChange(user.id, "BLOCKED")}
-                                            disabled={user.status === "BLOCKED" || updatingUserId === user.id}
+                                            onClick={() => handleStatusChange(user.id, "INACTIVE")}
+                                            disabled={user.status === "INACTIVE" || updatingUserId === user.id}
+                                            className="cursor-pointer"
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                                                <span>INACTIVE</span>
+                                            </div>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            onClick={() => handleStatusChange(user.id, "BANNED")}
+                                            disabled={user.status === "BANNED" || updatingUserId === user.id}
                                             className="cursor-pointer"
                                         >
                                             <div className="flex items-center gap-2">
                                                 <div className="w-2 h-2 rounded-full bg-red-500" />
-                                                <span>BLOCKED</span>
+                                                <span>BANNED</span>
                                             </div>
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>

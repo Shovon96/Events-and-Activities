@@ -9,7 +9,6 @@ import {
     Star,
     MessageSquare,
     TrendingUp,
-    Users,
     Award,
 } from "lucide-react";
 
@@ -18,7 +17,7 @@ interface UserDetailsData {
     email: string;
     fullName: string;
     role: "USER" | "HOST" | "ADMIN";
-    status: "ACTIVE" | "BLOCKED" | "DELETED";
+    status: "ACTIVE" | "INACTIVE" | "BANNED";
     profileImage?: string;
     city?: string;
     bio?: string;
@@ -45,10 +44,10 @@ export default function UserDetailsDesktop({ userData, userType }: UserDetailsDe
         switch (status) {
             case "ACTIVE":
                 return "bg-green-500";
-            case "BLOCKED":
+            case "INACTIVE":
+                return "bg-yellow-500";
+            case "BANNED":
                 return "bg-red-500";
-            case "DELETED":
-                return "bg-gray-500";
             default:
                 return "bg-gray-500";
         }
@@ -68,7 +67,7 @@ export default function UserDetailsDesktop({ userData, userType }: UserDetailsDe
     };
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-4">
             {/* Profile Section */}
             <div className="flex items-start gap-6">
                 <div className="shrink-0">
@@ -125,23 +124,17 @@ export default function UserDetailsDesktop({ userData, userType }: UserDetailsDe
 
             {/* Bio Section */}
             {userData.bio && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg">Bio</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-gray-700">{userData.bio}</p>
-                    </CardContent>
-                </Card>
+                <div className="bg-gray-50 border shadow-sm rounded-lg p-3">
+                    <strong>Bio: </strong>
+                    <span>{userData?.bio}</span>
+                </div>
             )}
 
             {/* Interests Section */}
             {userData.interests && userData.interests.length > 0 && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg">Interests</CardTitle>
-                    </CardHeader>
-                    <CardContent>
+                <div className="bg-gray-50 border shadow-sm rounded-lg p-3">
+                    <div className="flex gap-2 items-center">
+                        <strong className="text-lg">Interests:</strong>
                         <div className="flex flex-wrap gap-2">
                             {userData.interests.map((interest, index) => (
                                 <Badge key={index} variant="outline" className="text-sm">
@@ -149,12 +142,12 @@ export default function UserDetailsDesktop({ userData, userType }: UserDetailsDe
                                 </Badge>
                             ))}
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             )}
 
             {/* Statistics Section */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-4">
                 {userType === "USER" ? (
                     <>
                         <Card>

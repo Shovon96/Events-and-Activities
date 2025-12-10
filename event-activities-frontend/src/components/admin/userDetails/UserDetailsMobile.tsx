@@ -17,7 +17,7 @@ interface UserDetailsData {
     email: string;
     fullName: string;
     role: "USER" | "HOST" | "ADMIN";
-    status: "ACTIVE" | "BLOCKED" | "DELETED";
+    status: "ACTIVE" | "INACTIVE" | "BANNED";
     profileImage?: string;
     city?: string;
     bio?: string;
@@ -44,10 +44,10 @@ export default function UserDetailsMobile({ userData, userType }: UserDetailsMob
         switch (status) {
             case "ACTIVE":
                 return "bg-green-500";
-            case "BLOCKED":
+            case "INACTIVE":
+                return "bg-yellow-500";
+            case "BANNED":
                 return "bg-red-500";
-            case "DELETED":
-                return "bg-gray-500";
             default:
                 return "bg-gray-500";
         }

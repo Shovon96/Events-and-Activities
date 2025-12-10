@@ -12,4 +12,25 @@ router.get(
     AdminController.getDashboardStats
 );
 
+// Get user details with statistics
+router.get(
+    "/users/:id/details",
+    CheckAuth(UserRole.ADMIN),
+    AdminController.getUserDetails
+);
+
+// Update user status
+router.patch(
+    "/users/:id/status",
+    CheckAuth(UserRole.ADMIN),
+    AdminController.updateUserStatus
+);
+
+// Update user role
+router.patch(
+    "/users/:id/role",
+    CheckAuth(UserRole.ADMIN),
+    AdminController.updateUserRole
+);
+
 export const adminRoutes = router;
