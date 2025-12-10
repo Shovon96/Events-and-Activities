@@ -10,9 +10,10 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Mail, MapPin, Calendar, Shield, User as UserIcon } from "lucide-react";
+import { MoreVertical, Mail, MapPin, Calendar, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import UserDetailsModal from "./UserDetailsModal";
 
 interface User {
     id: string;
@@ -35,7 +36,14 @@ interface ManagementTableProps {
 
 export default function ManagementTable({ users, userType }: ManagementTableProps) {
     const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
+    const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const router = useRouter();
+
+    const handleViewDetails = (userId: string) => {
+        setSelectedUserId(userId);
+        setIsDetailsModalOpen(true);
+    };
 
     const handleStatusChange = async (userId: string, newStatus: "ACTIVE" | "BLOCKED") => {
         setUpdatingUserId(userId);
@@ -101,9 +109,9 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
         switch (status) {
             case "ACTIVE":
                 return "bg-green-500 hover:bg-green-600";
-            case "BLOCKED":
+            case "INACTIVE":
                 return "bg-red-500 hover:bg-red-600";
-            case "DELETED":
+            case "BANNED":
                 return "bg-gray-500 hover:bg-gray-600";
             default:
                 return "bg-gray-500 hover:bg-gray-600";
@@ -294,8 +302,14 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
-                                                        <DropdownMenuItem className="cursor-pointer">
+                                                        <DropdownMenuItem 
+                                                            className="cursor-pointer"
+                                                            onClick={() => handleViewDetails(user.id)}
+                                                        >
                                                             View Details
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem className="cursor-pointer text-secondary">
+                                                            Update {userType === "USER" ? "User" : "Host"}
                                                         </DropdownMenuItem>
                                                         <DropdownMenuItem className="cursor-pointer text-red-600">
                                                             Delete {userType === "USER" ? "User" : "Host"}
@@ -326,7 +340,7 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                                             alt={user.fullName}
                                         />
                                     ) : (
-                                        <div className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-lg">
+                                        <div className="h-12 w-12 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-lg">
                                             {user.fullName.charAt(0).toUpperCase()}
                                         </div>
                                     )}
@@ -342,8 +356,14 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DropdownMenuItem className="cursor-pointer">
+                                        <DropdownMenuItem 
+                                            className="cursor-pointer"
+                                            onClick={() => handleViewDetails(user.id)}
+                                        >
                                             View Details
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem className="cursor-pointer text-secondary">
+                                            Update {userType === "USER" ? "User" : "Host"}
                                         </DropdownMenuItem>
                                         <DropdownMenuItem className="cursor-pointer text-red-600">
                                             Delete {userType === "USER" ? "User" : "Host"}
@@ -428,6 +448,19 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                     </Card>
                 ))}
             </div>
+
+            {/* User Details Modal */}
+            {selectedUserId && (
+                <UserDetailsModal
+                    isOpen={isDetailsModalOpen}
+                    onClose={() => {
+                        setIsDetailsModalOpen(false);
+                        setSelectedUserId(null);
+                    }}
+                    userId={selectedUserId}
+                    userType={userType}
+                />
+            )}
         </div>
     );
 }

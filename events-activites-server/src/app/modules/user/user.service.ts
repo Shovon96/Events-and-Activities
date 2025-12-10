@@ -157,7 +157,7 @@ const getMyProfile = async (user: IJWTPayload) => {
 
     let profileData;
 
-    if (userInfo.role === UserRole.USER) {
+    if (userInfo.role === UserRole.USER || userInfo.role === UserRole.ADMIN) {
         profileData = await prisma.user.findUnique({
             where: {
                 email: userInfo.email
@@ -196,7 +196,7 @@ const getMyProfile = async (user: IJWTPayload) => {
         })
     }
 
-    if(userInfo.role === UserRole.HOST){
+    if(userInfo.role === UserRole.HOST || userInfo.role === UserRole.ADMIN){
         profileData = await prisma.user.findUnique({
             where: {
                 email: userInfo.email
