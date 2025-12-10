@@ -1,8 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet";
 import {
     LayoutDashboard,
     Calendar,
@@ -14,6 +23,8 @@ import {
     ShieldCheck,
     CalendarCog,
     History,
+    Menu,
+    X,
 } from "lucide-react";
 
 interface SidebarItem {
@@ -107,6 +118,7 @@ const adminMenuItems: SidebarItem[] = [
 
 export default function DashboardSidebar({ role }: DashboardSidebarProps) {
     const pathname = usePathname();
+    const [isOpen, setIsOpen] = useState(false);
 
     const menuItems =
         role === "ADMIN"
@@ -115,11 +127,13 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
             ? hostMenuItems
             : userMenuItems;
 
-    return (
-        <aside className="w-64 bg-white border-r border-gray-200 min-h-screen sticky top-0">
-            <div className="p-6">
+    const dashboardTitle = role === "ADMIN" ? "Admin" : role === "HOST" ? "Host" : "User";
+
+    const SidebarContent = ({ isMobile = false }: { isMobile?: boolean }) => (
+        <>
+            <div className={cn("p-6", isMobile && "pt-0")}>
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                    {role === "ADMIN" ? "Admin" : role === "HOST" ? "Host" : "User"} Dashboard
+                    {dashboardTitle} Dashboard
                 </h2>
                 <p className="text-sm text-gray-500">Manage your activities</p>
             </div>
@@ -133,6 +147,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
                         <Link
                             key={item.href}
                             href={item.href}
+                            onClick={() => isMobile && setIsOpen(false)}
                             className={cn(
                                 "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200",
                                 isActive
@@ -146,6 +161,40 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
                     );
                 })}
             </nav>
-        </aside>
+        </>
+    );
+
+    return (
+        <>
+            {/* Mobile Menu Button */}
+            <div className="lg:hidden fixed top-4 left-4 z-50">
+                <Sheet open={isOpen} onOpenChange={setIsOpen}>
+                    <SheetTrigger asChild>
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="bg-white shadow-lg hover:bg-gray-100"
+                        >
+                            <Menu className="h-5 w-5" />
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" className="w-72 p-0">
+                        <SheetHeader className="p-6 pb-4 border-b">
+                            <SheetTitle className="text-left">
+                                {dashboardTitle} Dashboard
+                            </SheetTitle>
+                        </SheetHeader>
+                        <div className="overflow-y-auto h-[calc(100vh-80px)]">
+                            <SidebarContent isMobile={true} />
+                        </div>
+                    </SheetContent>
+                </Sheet>
+            </div>
+
+            {/* Desktop Sidebar */}
+            <aside className="hidden lg:block w-64 bg-white border-r border-gray-200 min-h-screen sticky top-0">
+                <SidebarContent />
+            </aside>
+        </>
     );
 }
