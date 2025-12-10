@@ -400,9 +400,34 @@ const updateUserRole = async (userId: string, role: 'USER' | 'HOST') => {
     return updatedUser;
 };
 
+// Remove user
+const removeUser = async (userId: string) => {
+    // Check if user exists
+    const user = await prisma.user.findUnique({
+        where: { id: userId }
+    });
+
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    // Prevent deleting admin users
+    if (user.role === UserRole.ADMIN) {
+        throw new Error("Cannot delete admin user");
+    }
+
+    // Delete user (this will cascade delete related records based on Prisma schema)
+    await prisma.user.delete({
+        where: { id: userId }
+    });
+
+    return null;
+};
+
 export const AdminService = {
     getDashboardStats,
     getUserDetails,
     updateUserStatus,
-    updateUserRole
+    updateUserRole,
+    removeUser
 };

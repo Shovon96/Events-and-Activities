@@ -14,6 +14,7 @@ import { MoreVertical, Mail, MapPin, Calendar, User as UserIcon, ChevronDown } f
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import UserDetailsModal from "./UserDetailsModal";
+import DeleteConfirmationDialog from "../modals/DeleteConfirmationDialog";
 
 interface User {
     id: string;
@@ -38,11 +39,49 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
     const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [userToDelete, setUserToDelete] = useState<User | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
     const router = useRouter();
 
     const handleViewDetails = (userId: string) => {
         setSelectedUserId(userId);
         setIsDetailsModalOpen(true);
+    };
+
+    const handleDeleteClick = (user: User) => {
+        setUserToDelete(user);
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!userToDelete) return;
+
+        setIsDeleting(true);
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/admin/user/${userToDelete.id}`,
+                {
+                    method: "DELETE",
+                    credentials: "include",
+                }
+            );
+
+            if (response.ok) {
+                toast.success(`${userType === "USER" ? "User" : "Host"} deleted successfully!`);
+                setIsDeleteModalOpen(false);
+                setUserToDelete(null);
+                router.refresh();
+            } else {
+                const error = await response.json();
+                toast.error(error.message || `Failed to delete ${userType.toLowerCase()}`);
+            }
+        } catch (error) {
+            console.error(`Error deleting ${userType.toLowerCase()}:`, error);
+            toast.error(`An error occurred while deleting ${userType.toLowerCase()}`);
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     const handleStatusChange = async (userId: string, newStatus: "ACTIVE" | "INACTIVE" | "BANNED") => {
@@ -320,7 +359,10 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                                                         >
                                                             View Details
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuItem className="cursor-pointer text-red-600">
+                                                        <DropdownMenuItem 
+                                                            className="cursor-pointer text-red-600"
+                                                            onClick={() => handleDeleteClick(user)}
+                                                        >
                                                             Delete {userType === "USER" ? "User" : "Host"}
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
@@ -371,7 +413,10 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                                         >
                                             View Details
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem className="cursor-pointer text-red-600">
+                                        <DropdownMenuItem 
+                                            className="cursor-pointer text-red-600"
+                                            onClick={() => handleDeleteClick(user)}
+                                        >
                                             Delete {userType === "USER" ? "User" : "Host"}
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
@@ -479,6 +524,19 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                     userType={userType}
                 />
             )}
+
+            {/* Delete Confirmation Dialog */}
+            <DeleteConfirmationDialog
+                isOpen={isDeleteModalOpen}
+                onClose={() => {
+                    setIsDeleteModalOpen(false);
+                    setUserToDelete(null);
+                }}
+                onConfirm={handleDeleteConfirm}
+                title={`Delete ${userType === "USER" ? "User" : "Host"}`}
+                description={`Are you sure you want to delete "${userToDelete?.fullName}"? This action cannot be undone and will permanently remove the ${userType.toLowerCase()} and all associated data.`}
+                isDeleting={isDeleting}
+            />
         </div>
     );
 }

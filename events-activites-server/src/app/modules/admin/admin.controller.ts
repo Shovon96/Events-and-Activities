@@ -53,9 +53,22 @@ const updateUserRole = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const RemoveUser = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    await AdminService.removeUser(id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "User removed successfully!",
+        data: null
+    });
+});
+
 export const AdminController = {
     getDashboardStats,
     getUserDetails,
     updateUserStatus,
-    updateUserRole
+    updateUserRole,
+    RemoveUser
 };

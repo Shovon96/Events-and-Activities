@@ -33,4 +33,7 @@ router.patch(
     AdminController.updateUserRole
 );
 
+// Remove User
+router.delete("/user/:id", CheckAuth(UserRole.ADMIN), AdminController.RemoveUser)
+
 export const adminRoutes = router;
