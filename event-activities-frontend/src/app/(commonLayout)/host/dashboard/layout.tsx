@@ -9,7 +9,7 @@ export default async function DashboardLayout({
 }) {
     const user = await getUserInfo();
 
-    if (user.role !== "HOST") {
+    if (user?.role !== "HOST") {
         redirect("/login");
     }
 

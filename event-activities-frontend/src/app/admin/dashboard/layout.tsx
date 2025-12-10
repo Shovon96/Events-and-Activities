@@ -9,7 +9,7 @@ export default async function DashboardLayout({
 }) {
     const user = await getUserInfo();
 
-    if (user.role !== "ADMIN") {
+    if (user?.role !== "ADMIN") {
         redirect("/login");
     }
 
