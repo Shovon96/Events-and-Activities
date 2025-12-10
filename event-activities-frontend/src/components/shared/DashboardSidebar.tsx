@@ -89,18 +89,18 @@ const adminMenuItems: SidebarItem[] = [
         icon: LayoutDashboard,
     },
     {
-        label: "User Management",
-        href: "/admin/dashboard/users",
+        label: "Users Management",
+        href: "/admin/dashboard/users-management",
         icon: UserCog,
     },
     {
-        label: "Host Management",
-        href: "/admin/dashboard/hosts",
+        label: "Hosts Management",
+        href: "/admin/dashboard/hosts-management",
         icon: ShieldCheck,
     },
     {
-        label: "Event Management",
-        href: "/admin/dashboard/events",
+        label: "Events Management",
+        href: "/admin/dashboard/events-management",
         icon: CalendarCheck,
     },
 ];
