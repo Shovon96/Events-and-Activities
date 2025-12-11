@@ -1,0 +1,31 @@
+# Render ignore file - files/folders to exclude from deployment
+
+# Development files
+*.md
+.vscode/
+.git/
+
+# Test files
+*.test.ts
+*.spec.ts
+__tests__/
+
+# Documentation
+docs/
+
+# Local environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Uploads (if you have local uploads folder)
+uploads/
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,8 +1,22 @@
 #!/usr/bin/env bash
+# Exit on error
 set -o errexit
 
-npm install @types/express @types/cors @types/cookie-parser @types/multer @types/jsonwebtoken @types/bcrypt
-npm install
-npx prisma generate
+echo "Starting build process..."
+
+# Navigate to the server directory
+cd events-activites-server
+
+echo "Installing dependencies..."
+npm ci
+
+echo "Generating Prisma client..."
+npx prisma generate --schema=./prisma/schema
+
+echo "Building TypeScript..."
 npm run build
-npx prisma migrate deploy
+
+echo "Running database migrations..."
+npx prisma migrate deploy --schema=./prisma/schema
+
+echo "Build completed successfully!"
