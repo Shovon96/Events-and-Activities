@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import Stripe from "stripe";
 import { prisma } from "../../shared/prisma";
 import { PaymentStatus } from "@prisma/client";

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { prisma } from "../../shared/prisma";
 import AppError from "../../errorHandler/AppError";
 import httpStatus from "http-status";

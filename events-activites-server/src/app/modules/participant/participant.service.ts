@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { EventStatus, Prisma, UserRole, UserStatus } from "@prisma/client";
 import { prisma } from "../../shared/prisma";
 import AppError from "../../errorHandler/AppError";

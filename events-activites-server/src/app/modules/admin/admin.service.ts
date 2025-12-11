@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { prisma } from "../../shared/prisma";
 import { EventStatus, PaymentStatus, UserRole } from "@prisma/client";
 
