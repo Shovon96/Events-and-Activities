@@ -15,14 +15,14 @@ const login = catchAsync(async (req: Request, res: Response) => {
         secure: true,
         httpOnly: true,
         sameSite: "none",
-        domain: "https://eventora-zeta.vercel.app"
+        domain: "eventora-zeta.vercel.app"
         // maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
     })
     res.cookie("refreshToken", refreshToken, {
         secure: true,
         httpOnly: true,
         sameSite: "none",
-        domain: "https://eventora-zeta.vercel.app"
+        domain: "eventora-zeta.vercel.app"
         // maxAge: 1000 * 60 * 60 * 24 * 90 // 90 days
     })
 
