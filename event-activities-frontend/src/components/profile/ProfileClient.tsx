@@ -34,6 +34,7 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
 
     const handleUpdateProfile = async (data: any, file?: File) => {
         try {
+            const token = localStorage.getItem("token");
             const formData = new FormData();
             formData.append("data", JSON.stringify(data));
             if (file) {
@@ -48,6 +49,7 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
                     credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
+                        authorization: token as string
                     }
                 }
             );

@@ -28,6 +28,7 @@ export const loginUser = async (email: string, password: string) => {
 
         // Set cookies from backend response
         if (responseData.data?.accessToken) {
+            localStorage.setItem("token", responseData.data.accessToken);
             await setCookie("accessToken", responseData.data.accessToken, {
                 httpOnly: true,
                 secure: true,

@@ -10,7 +10,7 @@ import { jwtHelper } from "../helpers/jwtHelper";
 const CheckAuth = (...roles: string[]) => {
     return async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
         try {
-            const token = req.cookies.accessToken;
+            const token = req.cookies.accessToken || req.headers.authorization;
             console.log('accesstoken', token);
 
             if (!token) {
