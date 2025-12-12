@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import EventCategories from "@/components/modules/Home/EventCategories";
 import HomeHero from "@/components/modules/Home/HomeHero";
 import HowIsWork from "@/components/modules/Home/HowIsWork";

@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import HostDashboardStats from "@/components/dashboard/HostDashboardStats";
 import QuickActions from "@/components/dashboard/QuickActions";
 import { getUserInfo } from "@/lib/getUserSession";

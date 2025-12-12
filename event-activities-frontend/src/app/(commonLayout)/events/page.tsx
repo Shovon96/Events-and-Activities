@@ -1,4 +1,4 @@
-
+export const dynamic = "force-dynamic";
 import EventsFilter from "@/components/modules/events/EventsFilter";
 import EventCard from "@/components/shared/EventCard";
 import ManagementPageHeader from "@/components/shared/ManagementPageHeader";

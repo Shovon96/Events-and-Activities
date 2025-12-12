@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, Calendar, MapPin, Heart, Target, Zap, Shield, Award } from "lucide-react";

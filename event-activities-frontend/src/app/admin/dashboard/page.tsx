@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import AdminDashboardClient from "@/components/admin/AdminDashboardClient";
 import { serverFetch } from "@/lib/serverFetch";
 

@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, TrendingUp, Calendar, Users, CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

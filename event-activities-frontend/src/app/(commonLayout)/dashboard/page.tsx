@@ -1,4 +1,4 @@
-
+export const dynamic = "force-dynamic";
 import { getUserInfo } from "@/lib/getUserSession";
 import { serverFetch } from "@/lib/serverFetch";
 import UserDashboardStats from "@/components/dashboard/UserDashboardStats";

@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import EventCard from "@/components/shared/EventCard";
 import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
 import { serverFetch } from "@/lib/serverFetch";

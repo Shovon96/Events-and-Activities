@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
 import EventsManagementTable from "@/components/admin/EventsManagementTable";
 import { serverFetch } from "@/lib/serverFetch";

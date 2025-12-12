@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { serverFetch } from "@/lib/serverFetch";
 import HostedEventsClient from "@/components/host/HostedEventsClient";
 

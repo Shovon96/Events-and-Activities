@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import LoginForm from "@/components/modules/auth/LoginForm";
 import favicon from "@/app/favicon.ico"
 import Image from "next/image";

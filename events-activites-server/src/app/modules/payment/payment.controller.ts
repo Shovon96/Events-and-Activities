@@ -12,7 +12,8 @@ const handleStripeWebhookEvent = catchAsync(async (req: Request, res: Response) 
 
     // Get the correct signature header (stripe-signature, not stripe-signature_test)
     const sig = req.headers["stripe-signature"] as string;
-    const webhookSecret = "whsec_46af8efe5cc24b523848fecb2502729e6e8c7251889433538255276bbf571a83"
+    // const webhookSecret = "whsec_46af8efe5cc24b523848fecb2502729e6e8c7251889433538255276bbf571a83"
+    const webhookSecret = "whsec_4pgLNDHRGSEDJ89FKg8oInsTouNaQvrj"
 
     if (!sig) {
         console.error("❌ No stripe-signature header found");
