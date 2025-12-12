@@ -18,6 +18,7 @@ import {
     Users,
     Eye,
     Trash2,
+    ChevronDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -159,28 +160,28 @@ export default function EventsManagementTable({ events }: EventsManagementTableP
                             <table className="w-full">
                                 <thead className="bg-gray-50 border-b">
                                     <tr>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Event
                                         </th>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Host
                                         </th>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Location
                                         </th>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Date
                                         </th>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Participants
                                         </th>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Price
                                         </th>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Status
                                         </th>
-                                        <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-4 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Actions
                                         </th>
                                     </tr>
@@ -197,7 +198,7 @@ export default function EventsManagementTable({ events }: EventsManagementTableP
                                                             className="w-12 h-12 rounded-lg object-cover"
                                                         />
                                                     ) : (
-                                                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold">
+                                                        <div className="w-12 h-12 rounded-lg bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold">
                                                             {event.name.charAt(0).toUpperCase()}
                                                         </div>
                                                     )}
@@ -209,35 +210,35 @@ export default function EventsManagementTable({ events }: EventsManagementTableP
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-4 py-4 whitespace-nowrap">
                                                 <div className="text-sm text-gray-900">{event.host.fullName}</div>
                                                 <div className="text-xs text-gray-500">{event.host.email}</div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-4 py-4 whitespace-nowrap">
                                                 <div className="flex items-center text-sm text-gray-900">
                                                     <MapPin className="w-4 h-4 mr-2 text-gray-400" />
                                                     {event.location}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-4 py-4 whitespace-nowrap">
                                                 <div className="flex items-center text-sm text-gray-500">
                                                     <Calendar className="w-4 h-4 mr-2" />
                                                     {new Date(event.startDate).toLocaleDateString()}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-4 py-4 whitespace-nowrap">
                                                 <div className="flex items-center text-sm text-gray-900">
                                                     <Users className="w-4 h-4 mr-2 text-gray-400" />
                                                     {event.participants?.length || 0} / {event.maxParticipants || "∞"}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-4 py-4 whitespace-nowrap">
                                                 <div className="flex items-center text-sm font-semibold text-gray-900">
                                                     <DollarSign className="w-4 h-4 text-gray-400" />
                                                     ৳{event.ticketPrice || 0}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-4 py-4 whitespace-nowrap">
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
                                                         <Badge
@@ -246,6 +247,7 @@ export default function EventsManagementTable({ events }: EventsManagementTableP
                                                             {updatingEventId === event.id
                                                                 ? "Updating..."
                                                                 : event.status}
+                                                            <ChevronDown />
                                                         </Badge>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
@@ -304,7 +306,7 @@ export default function EventsManagementTable({ events }: EventsManagementTableP
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
                                                         <Button variant="ghost" size="sm">
@@ -353,7 +355,7 @@ export default function EventsManagementTable({ events }: EventsManagementTableP
                                         className="w-16 h-16 rounded-lg object-cover"
                                     />
                                 ) : (
-                                    <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xl">
+                                    <div className="w-16 h-16 rounded-lg bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xl">
                                         {event.name.charAt(0).toUpperCase()}
                                     </div>
                                 )}
