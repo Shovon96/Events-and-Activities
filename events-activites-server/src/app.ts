@@ -37,10 +37,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.get("/ping", (req: Request, res: Response) => {
-    res.send({
-        message: "ping running",
-        success: true
-    });
+  res.send("ok");
 });
 
 
