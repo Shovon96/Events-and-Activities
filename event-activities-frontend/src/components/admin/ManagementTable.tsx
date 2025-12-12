@@ -33,7 +33,7 @@ interface User {
 interface ManagementTableProps {
     users: User[];
     userType: "USER" | "HOST";
-    token: string | null
+    token?: string | null
 }
 
 export default function ManagementTable({ users, userType, token }: ManagementTableProps) {
@@ -528,6 +528,7 @@ export default function ManagementTable({ users, userType, token }: ManagementTa
                     }}
                     userId={selectedUserId}
                     userType={userType}
+                    token={token}
                 />
             )}
 

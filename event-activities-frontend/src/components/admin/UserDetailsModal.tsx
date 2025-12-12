@@ -40,6 +40,7 @@ interface UserDetailsModalProps {
     onClose: () => void;
     userId: string;
     userType: "USER" | "HOST";
+    token?: string | null;
 }
 
 export default function UserDetailsModal({
@@ -47,6 +48,7 @@ export default function UserDetailsModal({
     onClose,
     userId,
     userType,
+    token
 }: UserDetailsModalProps) {
     const [userData, setUserData] = useState<UserDetailsData | null>(null);
     const [loading, setLoading] = useState(false);
@@ -64,6 +66,9 @@ export default function UserDetailsModal({
                 `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/details`,
                 {
                     credentials: "include",
+                    headers: {
+                        authorization: token as string
+                    }
                 }
             );
 

@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 import HostsManagementClient from "@/components/admin/HostsManagementClient";
 import { serverFetch } from "@/lib/serverFetch"
+import { getCookie } from "@/service/auth.service";
 
 export default async function HostsManagementsPage() {
 
@@ -12,5 +13,7 @@ export default async function HostsManagementsPage() {
   const result = await response.json()
   const hosts = result?.data?.filter((res: any) => res.role === 'HOST') || []
 
-  return <HostsManagementClient users={hosts}  meta={result?.meta}/>;
+  const token = await getCookie("accessToken");
+
+  return <HostsManagementClient users={hosts}  meta={result?.meta} token={token} />;
 }
