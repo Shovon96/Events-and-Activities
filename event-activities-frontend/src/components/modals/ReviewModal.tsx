@@ -24,6 +24,7 @@ interface ReviewModalProps {
     reviewId?: string;
     initialRating?: number;
     initialComment?: string;
+    token: string | null;
 }
 
 export default function ReviewModal({
@@ -36,6 +37,7 @@ export default function ReviewModal({
     reviewId,
     initialRating = 0,
     initialComment = "",
+    token
 }: ReviewModalProps) {
     const [rating, setRating] = useState(initialRating);
     const [hoveredRating, setHoveredRating] = useState(0);
@@ -67,6 +69,7 @@ export default function ReviewModal({
                 credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
+                    authorization: token as string
                 },
                 body: JSON.stringify({
                     eventId,

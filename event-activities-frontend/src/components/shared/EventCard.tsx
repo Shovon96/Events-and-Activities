@@ -18,8 +18,9 @@ interface ICurrentUser {
 interface EventCardProps {
     events: IEventApiResponse;
     currentUser?: ICurrentUser;
+    token?: string | null;
 }
 
-export default function EventCard({ events, currentUser }: EventCardProps) {
-    return <EventCardClient events={events} currentUser={currentUser} />;
+export default function EventCard({ events, currentUser, token }: EventCardProps) {
+    return <EventCardClient events={events} currentUser={currentUser} token={token} />;
 }

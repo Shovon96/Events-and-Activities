@@ -37,9 +37,10 @@ interface IMetaData {
 interface UsersManagementClientProps {
     users: User[];
     meta?: IMetaData;
+    token: string | null;
 }
 
-export default function UsersManagementClient({ users, meta }: UsersManagementClientProps) {
+export default function UsersManagementClient({ users, meta, token }: UsersManagementClientProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("all");
     const [roleFilter, setRoleFilter] = useState<string>("all");
@@ -125,7 +126,7 @@ export default function UsersManagementClient({ users, meta }: UsersManagementCl
             </div>
 
             {/* Users Management Table */}
-            <ManagementTable users={filteredUsers} userType="USER" />
+            <ManagementTable users={filteredUsers} userType="USER" token={token} />
 
             <ManagementPagination
                 currentPage={meta?.page || 1}

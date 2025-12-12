@@ -5,6 +5,7 @@ import { serverFetch } from "@/lib/serverFetch";
 import EventsFilter from "@/components/modules/events/EventsFilter";
 import { getUserInfo } from "@/lib/getUserSession";
 import { redirect } from "next/navigation";
+import { getCookie } from "@/service/auth.service";
 
 interface SearchParams {
     searchTerm?: string;
@@ -27,6 +28,7 @@ export default async function HostedEventsPage({ searchParams }: { searchParams:
     }
 
     const params = await searchParams;
+    const token = await getCookie("accessToken");
 
     const response = await serverFetch.get("/users/my-profile", {
         cache: "no-store",
@@ -127,7 +129,7 @@ export default async function HostedEventsPage({ searchParams }: { searchParams:
 
             {/* Grid */}
             {paginatedEvents.length > 0 ? (
-                <EventCard events={formattedData} currentUser={user} />
+                <EventCard events={formattedData} currentUser={user} token={token}/>
             ) : (
                 <div className="py-20 text-center">
                     <p className="text-gray-500 text-lg">No events found</p>

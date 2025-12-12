@@ -33,9 +33,10 @@ interface User {
 interface ManagementTableProps {
     users: User[];
     userType: "USER" | "HOST";
+    token: string | null
 }
 
-export default function ManagementTable({ users, userType }: ManagementTableProps) {
+export default function ManagementTable({ users, userType, token }: ManagementTableProps) {
     const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -64,6 +65,9 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                 {
                     method: "DELETE",
                     credentials: "include",
+                    headers: {
+                        authorization: token as string
+                    }
                 }
             );
 
@@ -94,6 +98,7 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                     credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
+                        authorization: token as string
                     },
                     body: JSON.stringify({ status: newStatus }),
                 }
@@ -124,6 +129,7 @@ export default function ManagementTable({ users, userType }: ManagementTableProp
                     credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
+                        authorization: token as string
                     },
                     body: JSON.stringify({ role: newRole }),
                 }

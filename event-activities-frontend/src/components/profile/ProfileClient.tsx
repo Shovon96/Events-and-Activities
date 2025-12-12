@@ -25,16 +25,16 @@ interface ProfileData {
 
 interface ProfileClientProps {
     profile: ProfileData;
+    token: string | null;
 }
 
-export default function ProfileClient({ profile }: ProfileClientProps) {
+export default function ProfileClient({ profile, token }: ProfileClientProps) {
     const [isUpdateOpen, setIsUpdateOpen] = useState(false);
     const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
     const router = useRouter();
 
     const handleUpdateProfile = async (data: any, file?: File) => {
         try {
-            const token = localStorage.getItem("token");
             const formData = new FormData();
             formData.append("data", JSON.stringify(data));
             if (file) {
@@ -48,7 +48,6 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
                     body: formData,
                     credentials: "include",
                     headers: {
-                        "Content-Type": "application/json",
                         authorization: token as string
                     }
                 }
@@ -90,8 +89,8 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
                             )}
                             <Badge
                                 className={`absolute bottom-2 right-2 ${profile?.status === "ACTIVE"
-                                        ? "bg-green-500"
-                                        : "bg-gray-500"
+                                    ? "bg-green-500"
+                                    : "bg-gray-500"
                                     }`}
                             >
                                 {profile?.status}
@@ -188,6 +187,7 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
             <ChangePasswordModal
                 isOpen={isChangePasswordOpen}
                 onClose={() => setIsChangePasswordOpen(false)}
+                token={token}
             />
         </>
     );

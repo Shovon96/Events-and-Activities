@@ -28,9 +28,10 @@ interface ICurrentUser {
 interface EventCardClientProps {
     events: IEventApiResponse;
     currentUser?: ICurrentUser;
+    token?: string | null;
 }
 
-export default function EventCardClient({ events, currentUser }: EventCardClientProps) {
+export default function EventCardClient({ events, currentUser, token }: EventCardClientProps) {
     const [isLeaveOpen, setIsLeaveOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<any>(null);
     const [isLeaving, setIsLeaving] = useState(false);
@@ -61,6 +62,9 @@ export default function EventCardClient({ events, currentUser }: EventCardClient
                 {
                     method: "DELETE",
                     credentials: "include",
+                    headers: {
+                        authorization: token as string,
+                    },
                 }
             );
 

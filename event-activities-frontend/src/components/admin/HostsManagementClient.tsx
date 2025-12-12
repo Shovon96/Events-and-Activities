@@ -36,10 +36,11 @@ interface IMetaData {
 
 interface HostsManagementClientProps {
     users: User[];
-    meta?: IMetaData
+    meta?: IMetaData;
+    token: string | null;
 }
 
-export default function HostsManagementClient({ users, meta }: HostsManagementClientProps) {
+export default function HostsManagementClient({ users, meta, token }: HostsManagementClientProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("all");
     const [roleFilter, setRoleFilter] = useState<string>("all");
@@ -125,7 +126,7 @@ export default function HostsManagementClient({ users, meta }: HostsManagementCl
             </div>
 
             {/* Hosts Management Table */}
-            <ManagementTable users={filteredUsers} userType="HOST" />
+            <ManagementTable users={filteredUsers} userType="HOST" token={token} />
 
             <ManagementPagination
                 currentPage={meta?.page || 1}

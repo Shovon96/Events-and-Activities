@@ -19,11 +19,13 @@ import { useRouter } from "next/navigation";
 interface ChangePasswordModalProps {
     isOpen: boolean;
     onClose: () => void;
+    token: string | null
 }
 
 export default function ChangePasswordModal({
     isOpen,
     onClose,
+    token
 }: ChangePasswordModalProps) {
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
@@ -63,13 +65,14 @@ export default function ChangePasswordModal({
                 {
                     method: "POST",
                     credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
                     body: JSON.stringify({
                         oldPassword,
                         newPassword,
                     }),
+                    headers: {
+                        "Content-Type": "application/json",
+                        authorization: token as string
+                    }
                 }
             );
 

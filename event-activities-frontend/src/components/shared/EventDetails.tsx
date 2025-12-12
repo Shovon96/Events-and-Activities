@@ -63,6 +63,7 @@ interface EventDetailsProps {
         reviews?: EventReview[];
     };
     currentUser?: ICurrentUser;
+    token: string | null;
 }
 
 interface ICurrentUser {
@@ -73,7 +74,7 @@ interface ICurrentUser {
     profileImage?: string | null;
 }
 
-export default function EventDetails({ data, currentUser }: EventDetailsProps) {
+export default function EventDetails({ data, currentUser, token }: EventDetailsProps) {
     const event = data;
     const currentUserId = currentUser?.id;
     const router = useRouter();
@@ -154,6 +155,9 @@ export default function EventDetails({ data, currentUser }: EventDetailsProps) {
                 {
                     method: "DELETE",
                     credentials: "include",
+                    headers: {
+                        authorization: token as string
+                    },
                 }
             );
 
@@ -181,6 +185,7 @@ export default function EventDetails({ data, currentUser }: EventDetailsProps) {
                 credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
+                    authorization: token as string
                 },
                 body: JSON.stringify({ eventId }),
             });
@@ -251,6 +256,7 @@ export default function EventDetails({ data, currentUser }: EventDetailsProps) {
                             event={event}
                             eventAverageRating={eventAverageRating}
                             currentUser={currentUser}
+                            token={token}
                         />
 
                     </div>

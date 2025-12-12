@@ -45,9 +45,10 @@ interface IEventProps {
     },
     eventAverageRating: string | number;
     currentUser?: ICurrentUser;
+    token: string | null;
 }
 
-export default function EventReviews({ event, eventAverageRating, currentUser }: IEventProps) {
+export default function EventReviews({ event, eventAverageRating, currentUser, token }: IEventProps) {
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -81,6 +82,9 @@ export default function EventReviews({ event, eventAverageRating, currentUser }:
                 {
                     method: "DELETE",
                     credentials: "include",
+                    headers: {
+                        authorization: token as string
+                    }
                 }
             );
 
@@ -218,6 +222,7 @@ export default function EventReviews({ event, eventAverageRating, currentUser }:
             reviewId={editingReview?.id}
             initialRating={editingReview ? parseFloat(editingReview.rating) : 0}
             initialComment={editingReview?.comment || ""}
+            token={token}
         />
 
         {/* Delete Confirmation Dialog */}

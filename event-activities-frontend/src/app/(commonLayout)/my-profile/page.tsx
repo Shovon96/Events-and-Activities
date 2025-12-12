@@ -7,6 +7,7 @@ import { serverFetch } from "@/lib/serverFetch";
 import { getUserInfo } from "@/lib/getUserSession";
 import { redirect } from "next/navigation";
 import ProfileClient from "@/components/profile/ProfileClient";
+import { getCookie } from "@/service/auth.service";
 
 interface HostEvent {
     id: string;
@@ -65,6 +66,8 @@ export default async function MyProfilePage() {
         redirect("/login");
     }
 
+    const token = await getCookie("accessToken");
+
     const response = await serverFetch.get("/users/my-profile", {
         cache: "no-store",
         next: { tags: ["my-profile"] }
@@ -77,7 +80,7 @@ export default async function MyProfilePage() {
         <div className="min-h-screen bg-linear-to-br from-purple-50 via-white to-pink-50 py-12">
             <div className="max-w-7xl mx-auto px-4">
                 {/* Profile Header */}
-                <ProfileClient profile={profile} />
+                <ProfileClient profile={profile} token={token} />
 
                 {/* Events Section - HOST */}
                 {profile?.role === "HOST" && profile?.hostedEvents && (

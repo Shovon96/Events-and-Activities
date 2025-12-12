@@ -19,9 +19,10 @@ import { toast } from "sonner";
 
 interface HostedEventsClientProps {
     hostedEvents: any[];
+    token: string | null
 }
 
-export default function HostedEventsClient({ hostedEvents }: HostedEventsClientProps) {
+export default function HostedEventsClient({ hostedEvents, token }: HostedEventsClientProps) {
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [isUpdateOpen, setIsUpdateOpen] = useState(false);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -40,6 +41,7 @@ export default function HostedEventsClient({ hostedEvents }: HostedEventsClientP
                     credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
+                        authorization: token as string
                     },
                     body: JSON.stringify({ status: newStatus }),
                 }
@@ -72,6 +74,9 @@ export default function HostedEventsClient({ hostedEvents }: HostedEventsClientP
                 method: "POST",
                 body: formData,
                 credentials: "include",
+                headers: {
+                    authorization: token as string
+                }
             });
 
             if (response.ok) {
@@ -102,6 +107,9 @@ export default function HostedEventsClient({ hostedEvents }: HostedEventsClientP
                     method: "PATCH",
                     body: formData,
                     credentials: "include",
+                    headers: {
+                        authorization: token as string
+                    }
                 }
             );
 
@@ -140,6 +148,9 @@ export default function HostedEventsClient({ hostedEvents }: HostedEventsClientP
                 {
                     method: "DELETE",
                     credentials: "include",
+                    headers: {
+                        authorization: token as string
+                    }
                 }
             );
 
@@ -185,15 +196,14 @@ export default function HostedEventsClient({ hostedEvents }: HostedEventsClientP
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <Badge
-                                                className={`cursor-pointer hover:opacity-90 transition-opacity ${
-                                                    event.status === "OPEN"
+                                                className={`cursor-pointer hover:opacity-90 transition-opacity ${event.status === "OPEN"
                                                         ? "bg-green-500 hover:bg-green-600"
                                                         : event.status === "CANCELED"
-                                                        ? "bg-red-500 hover:bg-red-600"
-                                                        : event.status === "COMPLETED"
-                                                        ? "bg-blue-500 hover:bg-blue-600"
-                                                        : "bg-yellow-500 hover:bg-yellow-600"
-                                                }`}
+                                                            ? "bg-red-500 hover:bg-red-600"
+                                                            : event.status === "COMPLETED"
+                                                                ? "bg-blue-500 hover:bg-blue-600"
+                                                                : "bg-yellow-500 hover:bg-yellow-600"
+                                                    }`}
                                             >
                                                 {updatingStatusId === event.id ? "Updating..." : event.status}
                                                 <ChevronDown className="ml-1 w-3 h-3" />

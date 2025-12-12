@@ -1,5 +1,6 @@
 import EventDetails from "@/components/shared/EventDetails";
 import { getUserInfo } from "@/lib/getUserSession";
+import { getCookie } from "@/service/auth.service";
 
 export default async function EventDetailsPage({ params }: { params: Promise<{ id: string }> }) {
 
@@ -11,5 +12,7 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
     const user = await getUserInfo();
     const currentUser = user;
 
-    return <EventDetails data={result.data} currentUser={currentUser} />;
+    const token = await getCookie("accessToken");
+
+    return <EventDetails data={result.data} currentUser={currentUser} token={token}/>;
 }

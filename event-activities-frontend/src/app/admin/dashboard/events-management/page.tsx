@@ -2,8 +2,11 @@ export const dynamic = "force-dynamic";
 import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
 import EventsManagementTable from "@/components/admin/EventsManagementTable";
 import { serverFetch } from "@/lib/serverFetch";
+import { getCookie } from "@/service/auth.service";
 
 export default async function EventsManagementPage() {
+
+    const token = await getCookie("accessToken");
     const response = await serverFetch.get("/events", {
         cache: "no-cache",
         next: { tags: ["events"] },
@@ -20,7 +23,7 @@ export default async function EventsManagementPage() {
             />
 
             {/* Events Management Table */}
-            <EventsManagementTable events={events} />
+            <EventsManagementTable events={events} token={token} />
         </div>
     );
 }

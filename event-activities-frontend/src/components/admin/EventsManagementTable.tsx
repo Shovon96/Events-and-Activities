@@ -49,9 +49,10 @@ interface Event {
 
 interface EventsManagementTableProps {
     events: Event[];
+    token: string | null;
 }
 
-export default function EventsManagementTable({ events }: EventsManagementTableProps) {
+export default function EventsManagementTable({ events, token }: EventsManagementTableProps) {
     const [updatingEventId, setUpdatingEventId] = useState<string | null>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
@@ -68,6 +69,7 @@ export default function EventsManagementTable({ events }: EventsManagementTableP
                     credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
+                        authorization: token as string
                     },
                     body: JSON.stringify({ status: newStatus }),
                 }
@@ -103,6 +105,9 @@ export default function EventsManagementTable({ events }: EventsManagementTableP
                 {
                     method: "DELETE",
                     credentials: "include",
+                    headers: {
+                        authorization: token as string
+                    }
                 }
             );
 
