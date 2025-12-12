@@ -7,7 +7,8 @@ import { IOptions, paginationHelper } from "../../helpers/paginationHelper";
 
 const handleStripeWebhookEvent = async (event: Stripe.Event) => {
     switch (event.type) {
-        case "checkout.session.completed": {
+        // case "checkout.session.completed": {
+        case "payment_intent.succeeded": {
 
             const session = event.data.object as any;
             const eventId = session.metadata?.eventId;

@@ -98,6 +98,31 @@ const joinEvent = async (eventId: string, user: IJWTPayload) => {
             }
         })
 
+        // const session = await stripe.checkout.sessions.create({
+        //     payment_method_types: ["card"],
+        //     mode: "payment",
+        //     customer_email: user.email,
+        //     line_items: [
+        //         {
+        //             price_data: {
+        //                 currency: "bdt",
+        //                 product_data: {
+        //                     name: `Event In ${event.name}`,
+        //                 },
+        //                 unit_amount: (event.ticketPrice as number) * 100,
+        //             },
+        //             quantity: 1,
+        //         },
+        //     ],
+        //     metadata: {
+        //         eventId: event.id,
+        //         userId: userInfo.id,  // Added userId to metadata
+        //         paymentId: paymentData.id
+        //     },
+        //     success_url: config.stripe_success_url,
+        //     cancel_url: config.stripe_cancel_url
+        // });
+
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             mode: "payment",
@@ -116,12 +141,20 @@ const joinEvent = async (eventId: string, user: IJWTPayload) => {
             ],
             metadata: {
                 eventId: event.id,
-                userId: userInfo.id,  // Added userId to metadata
+                userId: userInfo.id,
                 paymentId: paymentData.id
+            },
+            payment_intent_data: {
+                metadata: {
+                    eventId: event.id,
+                    userId: userInfo.id,
+                    paymentId: paymentData.id
+                }
             },
             success_url: config.stripe_success_url,
             cancel_url: config.stripe_cancel_url
         });
+
 
         // Update event status to FULL if max participants reached
         const updatedParticipantCount = event.participants.length + 1;
