@@ -7,97 +7,46 @@ import { stripe } from "../../helpers/stripe";
 import { PaymentService } from "./payment.service";
 import httpStatus from "http-status";
 import filterPick from "../../helpers/filterPick";
-import { prisma } from "../../shared/prisma";
-
-// const handleStripeWebhookEvent = catchAsync(async (req: Request, res: Response) => {
-
-//     // Get the correct signature header (stripe-signature, not stripe-signature_test)
-//     const sig = req.headers["stripe-signature"] as string;
-//     // const webhookSecret = "whsec_46af8efe5cc24b523848fecb2502729e6e8c7251889433538255276bbf571a83"
-//     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
-
-//     if (!sig) {
-//         console.error("❌ No stripe-signature header found");
-//         return res.status(400).send('No signature header');
-//     }
-
-//     if (!webhookSecret) {
-//         console.error("❌ Webhook secret not configured");
-//         return res.status(500).send('Webhook secret not configured');
-//     }
-
-//     let event;
-//     try {
-//         event = stripe.webhooks.constructEvent(
-//             req.body,
-//             sig,
-//             webhookSecret
-//         );
-//         console.log('✅ Webhook signature verified');
-//     } catch (err: any) {
-//         console.error("❌ Stripe Webhook Verification Failed:", err.message);
-//         return res.status(400).send(`Webhook Error: ${err.message}`);
-//     }
-
-//     const result = await PaymentService.handleStripeWebhookEvent(event);
-
-//     sendResponse(res, {
-//         statusCode: 200,
-//         success: true,
-//         message: 'Webhook processed successfully',
-//         data: result,
-//     });
-// });
 
 const handleStripeWebhookEvent = catchAsync(async (req: Request, res: Response) => {
+
+    // Get the correct signature header (stripe-signature, not stripe-signature_test)
     const sig = req.headers["stripe-signature"] as string;
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    // const webhookSecret = "whsec_46af8efe5cc24b523848fecb2502729e6e8c7251889433538255276bbf571a83"
+    const webhookSecret = "whsec_4pgLNDHRGSEDJ89FKg8oInsTouNaQvrj"
+
+    if (!sig) {
+        console.error("❌ No stripe-signature header found");
+        return res.status(400).send('No signature header');
+    }
+
+    if (!webhookSecret) {
+        console.error("❌ Webhook secret not configured");
+        return res.status(500).send('Webhook secret not configured');
+    }
 
     let event;
     try {
-        event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret as string);
-        console.log("✅ Webhook Verified:", event.type);
+        event = stripe.webhooks.constructEvent(
+            req.body,
+            sig,
+            webhookSecret
+        );
+        console.log('✅ Webhook signature verified');
     } catch (err: any) {
-        console.error("❌ Verification Failed:", err.message);
+        console.error("❌ Stripe Webhook Verification Failed:", err.message);
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    if (event.type === "checkout.session.completed") {
-        const session = event.data.object as any;
+    const result = await PaymentService.handleStripeWebhookEvent(event);
 
-        const eventId = session.metadata.eventId;
-        const userId = session.metadata.userId;
-        const paymentId = session.metadata.paymentId;
-
-        console.log("🎉 Checkout Completed:", session.id);
-
-        await prisma.$transaction(async (tx) => {
-            await tx.payment.update({
-                where: { id: paymentId },
-                data: {
-                    paymentStatus: "PAID",
-                    transactionId: session.id,
-                    paymentGatewayData: session,
-                },
-            });
-
-            await tx.participant.update({
-                where: {
-                    userId_eventId: {
-                        userId,
-                        eventId
-                    }
-                },
-                data: {
-                    paymentStatus: "PAID",
-                }
-            });
-        });
-    }
-
-    return res.json({ received: true });
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Webhook processed successfully',
+        data: result,
+    });
 });
-
 
 const getEventPaymentHistory = catchAsync(async (req: Request, res: Response) => {
 
