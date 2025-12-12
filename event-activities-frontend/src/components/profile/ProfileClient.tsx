@@ -46,6 +46,9 @@ export default function ProfileClient({ profile }: ProfileClientProps) {
                     method: "PATCH",
                     body: formData,
                     credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
                 }
             );
 

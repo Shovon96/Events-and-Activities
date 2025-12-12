@@ -11,18 +11,21 @@ const CheckAuth = (...roles: string[]) => {
     return async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
         try {
             const token = req.cookies.accessToken;
+            console.log('accesstoken', token);
 
             if (!token) {
                 throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!")
             }
 
             const verifyUser = jwtHelper.verifyToken(token, config.jwt.jwt_secret as Secret);
+            console.log('verify user', verifyUser)
 
             req.user = verifyUser;
 
             if (roles.length && !roles.includes(verifyUser.role)) {
                 throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!")
             }
+            console.log("role",verifyUser?.role)
 
             next();
         }

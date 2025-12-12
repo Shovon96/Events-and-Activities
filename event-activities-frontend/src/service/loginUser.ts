@@ -30,18 +30,18 @@ export const loginUser = async (email: string, password: string) => {
         if (responseData.data?.accessToken) {
             await setCookie("accessToken", responseData.data.accessToken, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "lax",
-                maxAge: 60 * 60 * 24 * 7, // 7 days
+                secure: true,
+                sameSite: "none",
+                // maxAge: 60 * 60 * 24 * 7, // 7 days
             });
         }
 
         if (responseData.data?.refreshToken) {
             await setCookie("refreshToken", responseData.data.refreshToken, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "lax",
-                maxAge: 60 * 60 * 24 * 90, // 90 days
+                secure: true,
+                sameSite: "none",
+                // maxAge: 60 * 60 * 24 * 90, // 90 days
             });
         }
 
