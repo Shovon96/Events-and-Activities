@@ -1,6 +1,5 @@
 export const dynamic = "force-dynamic";
-import ManagementTable from "@/components/admin/ManagementTable"
-import ManagementPageHeader from "@/components/shared/ManagementPageHeader"
+import HostsManagementClient from "@/components/admin/HostsManagementClient";
 import { serverFetch } from "@/lib/serverFetch"
 
 export default async function HostsManagementsPage() {
@@ -13,15 +12,5 @@ export default async function HostsManagementsPage() {
   const result = await response.json()
   const hosts = result?.data?.filter((res: any) => res.role === 'HOST') || []
 
-  return (
-    <div>
-      <ManagementPageHeader
-        title="Manage Hosts"
-        description="Only admin can manage hosts."
-      />
-
-      {/* Hosts Management Table */}
-      <ManagementTable users={hosts} userType="HOST" />
-    </div>
-  )
+  return <HostsManagementClient users={hosts} />;
 }
