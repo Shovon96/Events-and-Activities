@@ -11,5 +11,5 @@ export default async function HostsManagementsNavPage() {
     const result = await response.json();
     const hosts = result?.data?.filter((res: any) => res.role === "HOST") || [];
 
-    return <HostsManagementClient users={hosts} />;
+    return <HostsManagementClient users={hosts}  meta={result?.meta} />;
 }

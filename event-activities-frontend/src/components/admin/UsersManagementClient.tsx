@@ -12,6 +12,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Search, Filter } from "lucide-react";
+import ManagementPagination from "../shared/ManagementPagination";
 
 interface User {
     id: string;
@@ -27,11 +28,18 @@ interface User {
     updatedAt: string;
 }
 
-interface UsersManagementClientProps {
-    users: User[];
+interface IMetaData {
+    limit: number | 1;
+    page: number | 1;
+    total: number;
 }
 
-export default function UsersManagementClient({ users }: UsersManagementClientProps) {
+interface UsersManagementClientProps {
+    users: User[];
+    meta?: IMetaData;
+}
+
+export default function UsersManagementClient({ users, meta }: UsersManagementClientProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("all");
     const [roleFilter, setRoleFilter] = useState<string>("all");
@@ -118,6 +126,11 @@ export default function UsersManagementClient({ users }: UsersManagementClientPr
 
             {/* Users Management Table */}
             <ManagementTable users={filteredUsers} userType="USER" />
+
+            <ManagementPagination
+                currentPage={meta?.page || 1}
+                totalPages={meta?.page || 1}
+            />
         </div>
     );
 }

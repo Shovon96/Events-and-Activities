@@ -12,6 +12,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Search, Filter } from "lucide-react";
+import ManagementPagination from "../shared/ManagementPagination";
 
 interface User {
     id: string;
@@ -27,11 +28,18 @@ interface User {
     updatedAt: string;
 }
 
-interface HostsManagementClientProps {
-    users: User[];
+interface IMetaData {
+    limit: number | 1;
+    page: number | 1;
+    total: number;
 }
 
-export default function HostsManagementClient({ users }: HostsManagementClientProps) {
+interface HostsManagementClientProps {
+    users: User[];
+    meta?: IMetaData
+}
+
+export default function HostsManagementClient({ users, meta }: HostsManagementClientProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("all");
     const [roleFilter, setRoleFilter] = useState<string>("all");
@@ -118,6 +126,11 @@ export default function HostsManagementClient({ users }: HostsManagementClientPr
 
             {/* Hosts Management Table */}
             <ManagementTable users={filteredUsers} userType="HOST" />
+
+            <ManagementPagination
+                currentPage={meta?.page || 1}
+                totalPages={meta?.page || 1}
+            />
         </div>
     );
 }

@@ -11,5 +11,5 @@ export default async function UsersManagementsNavPage() {
     const result = await response.json();
     const users = result?.data?.filter((res: any) => res.role === "USER") || [];
 
-    return <UsersManagementClient users={users} />;
+    return <UsersManagementClient users={users}  meta={result?.meta} />;
 }
