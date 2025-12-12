@@ -16,9 +16,10 @@ app.post(
 );
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: ["http://localhost:3000", "https://eventora-zeta.vercel.app"],
     credentials: true
 }));
+
 
 //parser
 app.use(express.json());

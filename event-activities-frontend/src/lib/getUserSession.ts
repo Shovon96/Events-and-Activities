@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server"
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { getCookie } from "@/service/auth.service";
 import jwt, { JwtPayload } from "jsonwebtoken";
