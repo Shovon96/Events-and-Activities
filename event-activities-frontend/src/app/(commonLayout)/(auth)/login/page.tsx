@@ -17,6 +17,13 @@ const LoginPage = () => {
                         </div>
                         <h1 className="text-4xl font-bold mb-4 leading-tight">Welcome back to your event journey</h1>
                         <p className="text-purple-100 mb-8">Continue exploring amazing events and connecting with your community. Your next adventure awaits!</p>
+                        {/* login creadentials card */}
+                        <div className="bg-black/40 shadow-lg p-4 rounded-md">
+                            <p><strong>User:</strong> eventora@user.com</p>
+                            <p><strong>Host:</strong> eventora@host.com</p>
+                            <p><strong>Admin:</strong> eventora@admin.com</p>
+                            <p><strong>All Pass:</strong> EventoraPass</p>
+                        </div>
                     </div>
 
                     {/* Login Creadentials */}

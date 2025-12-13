@@ -1,10 +1,6 @@
-The frontend is deployed on Vercel:
-- **URL**: `https://eventora-zeta.vercel.app`
+### Frontend deployed on Vercel-URL: `https://eventora-zeta.vercel.app`
 
-### Backend (Render)
-
-The backend is deployed on Render:
-- **URL**: `https://events-and-activities.onrender.com`
+### Backend is deployed on Render-URL: `https://events-and-activities.onrender.com`
 
 # 🎉 Eventora - Event Management Platform
 
@@ -78,51 +74,6 @@ Eventora is a comprehensive event management system that connects event organize
 - 🎭 Host management (view, edit role, change status, delete)
 - 🎪 Event management (view, update status, delete)
 - 🔍 Advanced filtering and search capabilities
-
-## 📁 Project Structure
-
-```
-eventora/
-├── event-activities-frontend/     # Next.js Frontend
-│   ├── src/
-│   │   ├── app/                   # App router pages
-│   │   ├── components/            # React components
-│   │   │   ├── admin/            # Admin components
-│   │   │   ├── host/             # Host components
-│   │   │   ├── modals/           # Modal components
-│   │   │   ├── modules/          # Feature modules
-│   │   │   ├── profile/          # Profile components
-│   │   │   └── shared/           # Shared components
-│   │   ├── hooks/                # Custom React hooks
-│   │   ├── lib/                  # Utility functions
-│   │   ├── service/              # API services
-│   │   ├── types/                # TypeScript types
-│   │   └── zodValidations/       # Zod schemas
-│   └── package.json
-│
-├── events-activites-server/       # Express.js Backend
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── middlewares/      # Express middlewares
-│   │   │   ├── modules/          # Feature modules
-│   │   │   │   ├── admin/       # Admin module
-│   │   │   │   ├── auth/        # Authentication
-│   │   │   │   ├── events/      # Events management
-│   │   │   │   ├── participant/ # Participant management
-│   │   │   │   ├── payment/     # Payment processing
-│   │   │   │   ├── review/      # Review system
-│   │   │   │   └── user/        # User management
-│   │   │   ├── routes/          # API routes
-│   │   │   └── shared/          # Shared utilities
-│   │   ├── prisma/              # Prisma schema
-│   │   └── server.ts            # Entry point
-│   └── package.json
-│
-├── DEPLOYMENT_CHECKLIST.md       # Deployment checklist
-├── QUICK_START_RENDER.md         # Quick deployment guide
-├── RENDER_DEPLOYMENT_GUIDE.md    # Detailed deployment guide
-└── readme.md                      # This file
-```
 
 ## 🚀 Getting Started
 
@@ -201,24 +152,22 @@ npm run stripe:webhook
 ## 🔑 Login Credentials
 
 ### Admin Account
-- **Email**: `admin@example.com`
-- **Password**: `admin123`
+- **Email**: `eventora@admin.com`
+- **Password**: `EventoraPass`
 
 ### Host Account
-- **Email**: `host@example.com`
-- **Password**: `host123`
+- **Email**: `eventora@host.com`
+- **Password**: `EventoraPass`
 
 ### User Account
-- **Email**: `user@example.com`
-- **Password**: `user123`
-
-> **Note**: These are demo credentials. In production, use strong passwords and change them immediately.
+- **Email**: `eventora@user.com`
+- **Password**: `EventoraPass`
 
 ## 📡 API Overview
 
 ### Base URL
 - **Local**: `http://localhost:5000/v1/api`
-- **Production**: `https://your-backend-url.onrender.com/v1/api`
+- **Production**: `https://events-and-activities.onrender.com`
 
 ### Authentication Endpoints
 
@@ -313,6 +262,7 @@ For detailed deployment instructions, refer to:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/v1/api
+JWT_SECRET=your-secret
 ```
 
 ### Backend (.env)
