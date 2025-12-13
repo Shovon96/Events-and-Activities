@@ -5,14 +5,71 @@ import { prisma } from "../../shared/prisma";
 import { PaymentStatus } from "@prisma/client";
 import { IOptions, paginationHelper } from "../../helpers/paginationHelper";
 
+// const handleStripeWebhookEvent = async (event: Stripe.Event) => {
+//     switch (event.type) {
+//         case "checkout.session.completed": {
+
+//             const session = event.data.object as any;
+//             const eventId = session.metadata?.eventId;
+//             const userId = session.metadata?.userId;
+//             const paymentId = session.metadata?.paymentId;
+
+//             // Use transaction to update both Payment and Participant
+//             await prisma.$transaction(async (tx) => {
+//                 // Update Payment status
+//                 await tx.payment.update({
+//                     where: { id: paymentId },
+//                     data: {
+//                         paymentStatus: session.payment_status === "paid"
+//                             ? PaymentStatus.PAID
+//                             : PaymentStatus.UNPAID,
+//                         transactionId: session.id,
+//                         paymentGatewayData: session,
+//                     },
+//                 });
+
+//                 // Update Participant payment status using composite unique key
+//                 await tx.participant.update({
+//                     where: {
+//                         userId_eventId: {
+//                             userId: userId,
+//                             eventId: eventId
+//                         }
+//                     },
+//                     data: {
+//                         paymentStatus: session.payment_status === "paid"
+//                             ? PaymentStatus.PAID
+//                             : PaymentStatus.UNPAID,
+//                     }
+//                 });
+//             });
+
+//             break;
+//         }
+
+//         default:
+//             console.log(`ℹ️ Unhandled Stripe webhook type: ${event.type}`);
+//     }
+
+//     return true;
+// };
+
 const handleStripeWebhookEvent = async (event: Stripe.Event) => {
     switch (event.type) {
         case "checkout.session.completed": {
+            console.log('🔔 Processing checkout.session.completed event');
 
             const session = event.data.object as any;
             const eventId = session.metadata?.eventId;
             const userId = session.metadata?.userId;
             const paymentId = session.metadata?.paymentId;
+
+            console.log('📦 Metadata:', { eventId, userId, paymentId });
+
+            if (!eventId || !userId || !paymentId) {
+                console.error('❌ Missing metadata in session:', session.metadata);
+                break;
+            }
 
             // Use transaction to update both Payment and Participant
             await prisma.$transaction(async (tx) => {
@@ -28,6 +85,8 @@ const handleStripeWebhookEvent = async (event: Stripe.Event) => {
                     },
                 });
 
+                console.log('✅ Payment updated:', paymentId);
+
                 // Update Participant payment status using composite unique key
                 await tx.participant.update({
                     where: {
@@ -42,8 +101,74 @@ const handleStripeWebhookEvent = async (event: Stripe.Event) => {
                             : PaymentStatus.UNPAID,
                     }
                 });
+
+                console.log('✅ Participant updated:', { userId, eventId });
             });
 
+            console.log('✅ Transaction completed successfully');
+            break;
+        }
+
+        case "payment_intent.succeeded": {
+            console.log('🔔 Processing payment_intent.succeeded event');
+
+            const paymentIntent = event.data.object as any;
+
+            // Get the checkout session from payment intent
+            const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+            const sessions = await stripe.checkout.sessions.list({
+                payment_intent: paymentIntent.id,
+                limit: 1
+            });
+
+            if (sessions.data.length === 0) {
+                console.error('❌ No checkout session found for payment intent:', paymentIntent.id);
+                break;
+            }
+
+            const session = sessions.data[0];
+            const eventId = session.metadata?.eventId;
+            const userId = session.metadata?.userId;
+            const paymentId = session.metadata?.paymentId;
+
+            console.log('📦 Metadata from session:', { eventId, userId, paymentId });
+
+            if (!eventId || !userId || !paymentId) {
+                console.error('❌ Missing metadata in session:', session.metadata);
+                break;
+            }
+
+            // Use transaction to update both Payment and Participant
+            await prisma.$transaction(async (tx) => {
+                // Update Payment status
+                await tx.payment.update({
+                    where: { id: paymentId },
+                    data: {
+                        paymentStatus: PaymentStatus.PAID,
+                        transactionId: paymentIntent.id,
+                        paymentGatewayData: paymentIntent,
+                    },
+                });
+
+                console.log('✅ Payment updated:', paymentId);
+
+                // Update Participant payment status using composite unique key
+                await tx.participant.update({
+                    where: {
+                        userId_eventId: {
+                            userId: userId,
+                            eventId: eventId
+                        }
+                    },
+                    data: {
+                        paymentStatus: PaymentStatus.PAID,
+                    }
+                });
+
+                console.log('✅ Participant updated:', { userId, eventId });
+            });
+
+            console.log('✅ Transaction completed successfully');
             break;
         }
 
@@ -53,6 +178,7 @@ const handleStripeWebhookEvent = async (event: Stripe.Event) => {
 
     return true;
 };
+
 
 const getEventPaymentHistory = async (eventId: string, options: IOptions) => {
     const { page, limit, skip, sortBy, sortOrder } = paginationHelper.calculatePagination(options);
