@@ -3,12 +3,14 @@ import EventCard from "@/components/shared/EventCard";
 import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
 import { getUserInfo } from "@/lib/getUserSession";
 import { serverFetch } from "@/lib/serverFetch";
+import { getCookie } from "@/service/auth.service";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function MyEventsPage() {
 
     const user = await getUserInfo();
+    const token = await getCookie("accessToken");
 
     if (!user) {
         redirect("/login");
@@ -49,7 +51,7 @@ export default async function MyEventsPage() {
 
             {/* Events Grid */}
             {events.length > 0 ? (
-                <EventCard events={formattedData} currentUser={user} />
+                <EventCard events={formattedData} currentUser={user} token={token} />
             ) : (
                 <div className="py-20 text-center">
                     <p className="text-gray-500 text-lg mb-4">You haven't joined any events yet</p>

@@ -55,6 +55,11 @@ export default function EventCardClient({ events, currentUser, token }: EventCar
     const handleLeaveConfirm = async () => {
         if (!selectedEvent) return;
 
+        if (!token) {
+            toast.error("Authentication required. Please login again.");
+            return;
+        }
+
         setIsLeaving(true);
         try {
             const response = await fetch(
@@ -63,7 +68,7 @@ export default function EventCardClient({ events, currentUser, token }: EventCar
                     method: "DELETE",
                     credentials: "include",
                     headers: {
-                        authorization: token as string,
+                        authorization: token,
                     },
                 }
             );
