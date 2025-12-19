@@ -28,14 +28,15 @@ export default function Testimonials() {
             <div className="max-w-7xl mx-auto px-6 text-center">
 
                 {/* Top Label */}
-                <p className="text-sm font-semibold text-rose-400 tracking-widest mb-2">
-                    TESTIMONIALS
-                </p>
+                    <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+                        <span className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></span>
+                        TESTIMONIALS
+                    </div>
 
-                {/* Main heading */}
-                <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                    What Our Community Says
-                </h2>
+                    {/* Heading */}
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                        Our <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">Community</span> Says
+                    </h2>
 
                 {/* Subheading */}
                 <p className="text-gray-600 max-w-2xl mx-auto mb-16">

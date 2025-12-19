@@ -6,7 +6,6 @@ import { Carousel, CarouselContent, CarouselItem, CarouselApi } from "@/componen
 import { Button } from "@/components/ui/button";
 import { Calendar, Users, Star } from "lucide-react";
 import Link from "next/link";
-import { getUserInfo } from "@/lib/getUserSession";
 
 const heroSlides = [
     {
@@ -161,11 +160,10 @@ export default function HomeHero() {
                         <button
                             key={index}
                             onClick={() => api?.scrollTo(index)}
-                            className={`transition-all duration-300 rounded-full ${
-                                current === index
+                            className={`transition-all duration-300 rounded-full ${current === index
                                     ? "w-8 h-2 bg-white"
                                     : "w-2 h-2 bg-white/50 hover:bg-white/75"
-                            }`}
+                                }`}
                             aria-label={`Go to slide ${index + 1}`}
                         />
                     ))}

@@ -76,15 +76,21 @@ export default function PopularEvents() {
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
                 <div>
-                    <p className="text-sm text-secondary font-semibold tracking-wide">
+                    {/* Top Label */}
+                    <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+                        <span className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></span>
                         TRENDING NOW
-                    </p>
-                    <h2 className="text-4xl font-bold">Popular Events</h2>
+                    </div>
+
+                    {/* Heading */}
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
+                        Popular <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">Events</span>
+                    </h2>
                 </div>
                 <Link
                     href="/events"
                     className="text-sm font-semibold text-primary hover:underline"
-                    >
+                >
                     View All Events →
                 </Link>
             </div>

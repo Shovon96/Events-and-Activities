@@ -41,10 +41,16 @@ export default function TopRatedHosts() {
   return (
     <section className="py-20">
       <div className="text-center mb-12">
-        <p className="text-xs font-semibold text-secondary tracking-wide mb-2">
+        {/* Top Label */}
+        <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+          <span className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></span>
           TRUSTED EXPERTS
-        </p>
-        <h2 className="text-3xl md:text-4xl font-bold mb-3">Top-Rated Hosts</h2>
+        </div>
+
+        {/* Heading */}
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          Top <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">Rated</span> Hosts
+        </h2>
         <p className="text-gray-600 max-w-xl mx-auto">
           Meet our community of verified hosts who create exceptional experiences.
         </p>
