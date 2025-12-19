@@ -14,9 +14,11 @@ export default async function DashboardLayout({
         redirect("/login");
     }
 
+    const role = user?.role || "GUEST";
+
     return (
         <>
-            <Navbar />
+            <Navbar userInfo={user} role={role} />
             <div className="min-h-screen">
                 {children}
             </div>
