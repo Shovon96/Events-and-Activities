@@ -58,6 +58,9 @@ interface EventDetailsProps {
         maxParticipants: number;
         ticketPrice: number;
         status: string;
+        couponCode?: string | null;
+        couponDiscount?: number | null;
+        couponActive?: boolean;
         host: Host;
         participants?: Participant[];
         reviews?: EventReview[];
@@ -74,12 +77,22 @@ interface ICurrentUser {
     profileImage?: string | null;
 }
 
+interface CouponDiscount {
+    couponCode: string;
+    discountPercent: number;
+    originalPrice: number;
+    discountAmount: number;
+    finalPrice: number;
+}
+
 export default function EventDetails({ data, currentUser, token }: EventDetailsProps) {
     const event = data;
     const currentUserId = currentUser?.id;
     const router = useRouter();
     const [isLeaveOpen, setIsLeaveOpen] = useState(false);
     const [isLeaving, setIsLeaving] = useState(false);
+    const [appliedDiscount, setAppliedDiscount] = useState<CouponDiscount | null>(null);
+    const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
 
     // Check if current user has joined this event
     const hasUserJoined = currentUserId && event.participants && Array.isArray(event.participants)
@@ -177,9 +190,63 @@ export default function EventDetails({ data, currentUser, token }: EventDetailsP
         }
     };
 
+    // Handle apply coupon
+    const handleApplyCoupon = async (code: string) => {
+        if (!token) {
+            toast.error("Please login to apply coupon");
+            return;
+        }
+
+        setIsApplyingCoupon(true);
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/coupons/apply`,
+                {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                        authorization: token as string,
+                    },
+                    body: JSON.stringify({
+                        eventId: event.id,
+                        couponCode: code,
+                    }),
+                }
+            );
+
+            const result = await response.json();
+
+            if (result.success && result.data) {
+                setAppliedDiscount(result.data);
+                toast.success(result.message || "Coupon applied successfully!");
+            } else {
+                toast.error(result.message || "Failed to apply coupon");
+            }
+        } catch (error) {
+            console.error("Error applying coupon:", error);
+            toast.error("An error occurred while applying coupon");
+        } finally {
+            setIsApplyingCoupon(false);
+        }
+    };
+
+    // Handle remove coupon
+    const handleRemoveCoupon = () => {
+        setAppliedDiscount(null);
+        toast.info("Coupon removed");
+    };
+
     // Handle payments
     const handlePayment = async (eventId: string) => {
         try {
+            const payload: any = { eventId };
+            
+            // Include coupon code if applied
+            if (appliedDiscount) {
+                payload.couponCode = appliedDiscount.couponCode;
+            }
+
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}/join`, {
                 method: "POST",
                 credentials: "include",
@@ -187,7 +254,7 @@ export default function EventDetails({ data, currentUser, token }: EventDetailsP
                     "Content-Type": "application/json",
                     authorization: token as string
                 },
-                body: JSON.stringify({ eventId }),
+                body: JSON.stringify(payload),
             });
 
             const result = await res.json();
@@ -277,6 +344,12 @@ export default function EventDetails({ data, currentUser, token }: EventDetailsP
                             onLeaveClose={() => setIsLeaveOpen(false)}
                             onLeaveConfirm={handleLeaveEvent}
                             onJoinClick={() => handlePayment(event.id)}
+                            couponCode={event.couponCode}
+                            couponActive={event.couponActive}
+                            appliedDiscount={appliedDiscount}
+                            onApplyCoupon={handleApplyCoupon}
+                            onRemoveCoupon={handleRemoveCoupon}
+                            isApplyingCoupon={isApplyingCoupon}
                         />
                     </div>
 

@@ -1,5 +1,5 @@
 export const dynamic = "force-dynamic";
-import { Star, DollarSign, User } from "lucide-react";
+import { Star, DollarSign, User, Tag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
@@ -25,6 +25,11 @@ interface HostEvent {
 interface JoinedEvent {
     id: string;
     paymentStatus: string;
+    couponApplied?: boolean;
+    couponCode?: string;
+    discountAmount?: number;
+    originalPrice?: number;
+    finalPrice?: number;
     event: {
         id: string;
         name: string;
@@ -175,9 +180,22 @@ export default async function MyProfilePage() {
                                                         <div className="flex items-center gap-2 text-gray-600">
                                                             <DollarSign className="w-4 h-4 text-purple-500" />
                                                             <span className="font-semibold">
-                                                                ৳{joined.event.ticketPrice}
+                                                                ৳{joined.finalPrice || joined.event.ticketPrice}
                                                             </span>
+                                                            {joined.couponApplied && joined.originalPrice && (
+                                                                <span className="text-xs text-gray-400 line-through">
+                                                                    ৳{joined.originalPrice}
+                                                                </span>
+                                                            )}
                                                         </div>
+                                                        {joined.couponApplied && joined.couponCode && joined.discountAmount && (
+                                                            <div className="flex items-center gap-2 text-green-600">
+                                                                <Tag className="w-4 h-4" />
+                                                                <span className="text-xs font-semibold">
+                                                                    Saved ৳{joined.discountAmount} with {joined.couponCode}
+                                                                </span>
+                                                            </div>
+                                                        )}
                                                         <div className="flex items-center gap-2 text-gray-600">
                                                             <User className="w-4 h-4 text-purple-500" />
                                                             <span className="text-sm">

@@ -1,6 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, MapPin } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Calendar, Clock, MapPin, Tag, X } from "lucide-react";
 import DeleteConfirmationDialog from "@/components/modals/DeleteConfirmationDialog";
+import { useState } from "react";
 
 interface ICurrentUser {
     id: string;
@@ -8,6 +11,14 @@ interface ICurrentUser {
     fullName: string;
     role: string;
     profileImage?: string | null;
+}
+
+interface CouponDiscount {
+    couponCode: string;
+    discountPercent: number;
+    originalPrice: number;
+    discountAmount: number;
+    finalPrice: number;
 }
 
 interface EventBookingCardProps {
@@ -27,6 +38,13 @@ interface EventBookingCardProps {
     onLeaveClose: () => void;
     onLeaveConfirm: () => void;
     onJoinClick: () => void;
+    // Coupon props
+    couponCode?: string | null;
+    couponActive?: boolean;
+    appliedDiscount: CouponDiscount | null;
+    onApplyCoupon: (code: string) => Promise<void>;
+    onRemoveCoupon: () => void;
+    isApplyingCoupon: boolean;
 }
 
 export default function EventBookingCard({
@@ -43,18 +61,119 @@ export default function EventBookingCard({
     onLeaveClose,
     onLeaveConfirm,
     onJoinClick,
+    couponCode,
+    couponActive,
+    appliedDiscount,
+    onApplyCoupon,
+    onRemoveCoupon,
+    isApplyingCoupon,
 }: EventBookingCardProps) {
+    const [couponInput, setCouponInput] = useState("");
+
+    const handleApplyCoupon = async () => {
+        if (!couponInput.trim()) return;
+        await onApplyCoupon(couponInput.trim().toUpperCase());
+    };
+
+    const handleRemoveCoupon = () => {
+        setCouponInput("");
+        onRemoveCoupon();
+    };
+
+    const displayPrice = appliedDiscount ? appliedDiscount.finalPrice : ticketPrice;
+
     return (
         <div className="bg-white rounded-2xl shadow-2xl p-8 sticky top-8">
             {/* Price Section */}
             <div className="text-center mb-6 pb-6 border-b">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                    <span className="text-5xl font-bold text-gray-800">
-                        ৳{ticketPrice}
-                    </span>
-                </div>
-                <p className="text-gray-500 text-sm">per person</p>
+                {appliedDiscount ? (
+                    <>
+                        <div className="flex items-center justify-center gap-2 mb-2">
+                            <span className="text-3xl font-bold text-gray-400 line-through">
+                                ৳{appliedDiscount.originalPrice}
+                            </span>
+                        </div>
+                        <div className="flex items-center justify-center gap-2 mb-2">
+                            <span className="text-5xl font-bold text-green-600">
+                                ৳{appliedDiscount.finalPrice}
+                            </span>
+                        </div>
+                        <p className="text-green-600 text-sm font-semibold">
+                            You save ৳{appliedDiscount.discountAmount} ({appliedDiscount.discountPercent}% off)
+                        </p>
+                    </>
+                ) : (
+                    <>
+                        <div className="flex items-center justify-center gap-2 mb-2">
+                            <span className="text-5xl font-bold text-gray-800">
+                                ৳{ticketPrice}
+                            </span>
+                        </div>
+                        <p className="text-gray-500 text-sm">per person</p>
+                    </>
+                )}
             </div>
+
+            {/* Coupon Section - Only show if not joined and coupon is available */}
+            {!hasUserJoined && couponActive && couponCode && (
+                <div className="mb-6 p-4 bg-purple-50 rounded-xl border border-purple-200">
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                        <Tag className="w-4 h-4 text-purple-600" />
+                        Have a coupon code?
+                    </Label>
+                    
+                    {appliedDiscount ? (
+                        // Show applied coupon
+                        <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <Tag className="w-5 h-5 text-green-600" />
+                                    <div>
+                                        <p className="text-green-700 font-bold text-sm">
+                                            {appliedDiscount.couponCode}
+                                        </p>
+                                        <p className="text-green-600 text-xs">
+                                            {appliedDiscount.discountPercent}% discount applied
+                                        </p>
+                                    </div>
+                                </div>
+                                <Button
+                                    onClick={handleRemoveCoupon}
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-8 w-8 p-0 hover:bg-red-100"
+                                >
+                                    <X className="w-4 h-4 text-red-600" />
+                                </Button>
+                            </div>
+                        </div>
+                    ) : (
+                        // Show coupon input
+                        <>
+                            <div className="flex gap-2 mt-2">
+                                <Input
+                                    placeholder="Enter code"
+                                    value={couponInput}
+                                    onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                                    className="flex-1 uppercase"
+                                    disabled={isApplyingCoupon}
+                                />
+                                <Button
+                                    onClick={handleApplyCoupon}
+                                    disabled={!couponInput.trim() || isApplyingCoupon}
+                                    className="bg-purple-600 hover:bg-purple-700"
+                                >
+                                    {isApplyingCoupon ? "Applying..." : "Apply"}
+                                </Button>
+                            </div>
+                            <p className="text-xs text-purple-600 mt-2 flex items-center gap-1">
+                                <Tag className="w-3 h-3" />
+                                Available code: <span className="font-bold">{couponCode}</span>
+                            </p>
+                        </>
+                    )}
+                </div>
+            )}
 
             {/* Status Badge */}
             <div className="mb-6">
@@ -82,6 +201,24 @@ export default function EventBookingCard({
                     <p className="text-base text-green-600">✔ You have already joined this event</p>
                 }
             </div>
+
+            {/* Price Breakdown - Show if coupon applied */}
+            {appliedDiscount && !hasUserJoined && (
+                <div className="mb-6 p-4 bg-gray-50 rounded-xl space-y-2">
+                    <div className="flex justify-between text-sm text-gray-600">
+                        <span>Original Price:</span>
+                        <span className="line-through">৳{appliedDiscount.originalPrice}</span>
+                    </div>
+                    <div className="flex justify-between text-sm text-green-600 font-semibold">
+                        <span>Discount ({appliedDiscount.couponCode}):</span>
+                        <span>-৳{appliedDiscount.discountAmount}</span>
+                    </div>
+                    <div className="flex justify-between text-lg font-bold text-gray-800 pt-2 border-t">
+                        <span>Total:</span>
+                        <span>৳{appliedDiscount.finalPrice}</span>
+                    </div>
+                </div>
+            )}
 
             {/* CTA Button */}
             {hasUserJoined && isPaymentComplete ? (
