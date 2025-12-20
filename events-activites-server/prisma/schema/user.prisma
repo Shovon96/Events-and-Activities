@@ -35,6 +35,12 @@ model Event {
     // paymentStatus   PaymentStatus @default(UNPAID)
     status          EventStatus @default(OPEN)
     ticketPrice     Float?      @default(0)
+    
+    // Coupon fields
+    couponCode      String?
+    couponDiscount  Int?        // Discount percentage (e.g., 20 for 20%)
+    couponActive    Boolean     @default(false)
+    
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
 
@@ -56,7 +62,14 @@ model Participant {
     event   Event  @relation(fields: [eventId], references: [id])
     eventId String
 
-    paymentStatus PaymentStatus @default(UNPAID)
+    paymentStatus   PaymentStatus @default(UNPAID)
+    
+    // Coupon tracking
+    couponApplied   Boolean       @default(false)
+    couponCode      String?
+    discountAmount  Float?        @default(0)
+    originalPrice   Float?
+    finalPrice      Float?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
