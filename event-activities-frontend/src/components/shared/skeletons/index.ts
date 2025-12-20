@@ -6,3 +6,4 @@ export { SkeletonList } from "./SkeletonList";
 export { TableSkeleton } from "./TableSkeleton";
 export { PageHeaderSkeleton } from "./PageHeaderSkeleton";
 export { SearchFilterSkeleton } from "./SearchFilterSkeleton";
+export { ProfileSkeleton } from "./ProfileSkeleton";
