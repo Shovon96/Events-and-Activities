@@ -35,11 +35,13 @@ export default async function MyEventsPage() {
 
     return (
         <section className="max-w-7xl mx-auto px-4">
-            <div className="py-4 flex justify-center text-center">
-                <ManagementPageHeader
-                    title="My Booked Events"
-                    description="View and manage all the events you've joined"
-                />
+            <div className="py-8 text-center">
+                {/* Heading */}
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+                    My <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">Booked Events</span>
+                </h2>
+                <p className="text-gray-600 mt-2 max-w-[500px] mx-auto">View and manage all the events you've joined.</p>
+
             </div>
 
             {/* Results Count */}
