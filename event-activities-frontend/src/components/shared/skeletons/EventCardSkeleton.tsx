@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export function EventCardSkeleton() {
   return (
-    <Card className="overflow-hidden rounded-xl border shadow-sm">
+    <Card className="overflow-hidden rounded-xl border shadow-sm p-0">
       {/* Image Skeleton */}
       <Skeleton className="h-56 w-full rounded-none" />
 

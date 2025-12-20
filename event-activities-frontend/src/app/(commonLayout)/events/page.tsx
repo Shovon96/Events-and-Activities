@@ -19,7 +19,7 @@ interface SearchParams {
 export default async function EventsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
 
     const params = await searchParams;
-    const user =  await getUserInfo();
+    const user = await getUserInfo();
 
     // Build query string from search params
     const queryParams = new URLSearchParams();
@@ -68,11 +68,12 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
 
     return (
         <section className="max-w-7xl mx-auto px-4">
-            <div className="py-8 flex justify-center text-center">
-                <ManagementPageHeader
-                    title="Explore Latest Events"
-                    description="Discover the latest events and activities happening around you."
-                />
+            <div className="py-8 text-center">
+                {/* Heading */}
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+                    Explore <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">Latest Events</span>
+                </h2>
+                <p className="text-gray-600 mt-2 max-w-[500px] mx-auto">Discover the latest events and activities happening around you. Filter by location, type, status and more.</p>
             </div>
 
             <EventsFilter
@@ -90,7 +91,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
 
             {/* Grid */}
             {events?.data?.data?.length > 0 ? (
-                <EventCard events={events} currentUser={user}/>
+                <EventCard events={events} currentUser={user} />
             ) : (
                 <div className="py-20 text-center">
                     <p className="text-gray-500 text-lg">No events found</p>
