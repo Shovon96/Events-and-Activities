@@ -155,7 +155,7 @@ export default function FAQPage() {
                         <Badge className="mb-4 bg-purple-200 text-purple-700 px-4 py-2">HELP CENTER</Badge>
                         <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
                             Frequently
-                            <span className="bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> Asked</span> Questions
+                            <span className="bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> Asked Questions</span>
                         </h1>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
                             Find answers to common questions about Eventora. Can't find what you're looking for?
