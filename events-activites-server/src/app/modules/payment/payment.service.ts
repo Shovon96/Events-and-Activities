@@ -55,120 +55,112 @@ import { IOptions, paginationHelper } from "../../helpers/paginationHelper";
 // };
 
 const handleStripeWebhookEvent = async (event: Stripe.Event) => {
+
     switch (event.type) {
         case "checkout.session.completed": {
-            console.log('🔔 Processing checkout.session.completed event');
 
             const session = event.data.object as any;
             const eventId = session.metadata?.eventId;
             const userId = session.metadata?.userId;
             const paymentId = session.metadata?.paymentId;
 
-            console.log('📦 Metadata:', { eventId, userId, paymentId });
-
             if (!eventId || !userId || !paymentId) {
                 console.error('❌ Missing metadata in session:', session.metadata);
                 break;
             }
 
-            // Use transaction to update both Payment and Participant
-            await prisma.$transaction(async (tx) => {
-                // Update Payment status
-                await tx.payment.update({
-                    where: { id: paymentId },
-                    data: {
-                        paymentStatus: session.payment_status === "paid"
-                            ? PaymentStatus.PAID
-                            : PaymentStatus.UNPAID,
-                        transactionId: session.id,
-                        paymentGatewayData: session,
-                    },
-                });
+            try {
+                // Use transaction to update both Payment and Participant
+                await prisma.$transaction(async (tx) => {
+                    // Update Payment status
+                    await tx.payment.update({
+                        where: { id: paymentId },
+                        data: {
+                            paymentStatus: session.payment_status === "paid"
+                                ? PaymentStatus.PAID
+                                : PaymentStatus.UNPAID,
+                            transactionId: session.id,
+                            paymentGatewayData: session,
+                        },
+                    });
 
-                console.log('✅ Payment updated:', paymentId);
-
-                // Update Participant payment status using composite unique key
-                await tx.participant.update({
-                    where: {
-                        userId_eventId: {
-                            userId: userId,
-                            eventId: eventId
+                    // Update Participant payment status using composite unique key
+                    await tx.participant.update({
+                        where: {
+                            userId_eventId: {
+                                userId: userId,
+                                eventId: eventId
+                            }
+                        },
+                        data: {
+                            paymentStatus: session.payment_status === "paid"
+                                ? PaymentStatus.PAID
+                                : PaymentStatus.UNPAID,
                         }
-                    },
-                    data: {
-                        paymentStatus: session.payment_status === "paid"
-                            ? PaymentStatus.PAID
-                            : PaymentStatus.UNPAID,
-                    }
+                    });
                 });
-
-                console.log('✅ Participant updated:', { userId, eventId });
-            });
-
-            console.log('✅ Transaction completed successfully');
+            } catch (error) {
+                console.error('❌ Error updating payment/participant:', error);
+                throw error;
+            }
             break;
         }
 
         case "payment_intent.succeeded": {
-            console.log('🔔 Processing payment_intent.succeeded event');
 
             const paymentIntent = event.data.object as any;
 
-            // Get the checkout session from payment intent
-            const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
-            const sessions = await stripe.checkout.sessions.list({
-                payment_intent: paymentIntent.id,
-                limit: 1
-            });
-
-            if (sessions.data.length === 0) {
-                console.error('❌ No checkout session found for payment intent:', paymentIntent.id);
-                break;
-            }
-
-            const session = sessions.data[0];
-            const eventId = session.metadata?.eventId;
-            const userId = session.metadata?.userId;
-            const paymentId = session.metadata?.paymentId;
-
-            console.log('📦 Metadata from session:', { eventId, userId, paymentId });
-
-            if (!eventId || !userId || !paymentId) {
-                console.error('❌ Missing metadata in session:', session.metadata);
-                break;
-            }
-
-            // Use transaction to update both Payment and Participant
-            await prisma.$transaction(async (tx) => {
-                // Update Payment status
-                await tx.payment.update({
-                    where: { id: paymentId },
-                    data: {
-                        paymentStatus: PaymentStatus.PAID,
-                        transactionId: paymentIntent.id,
-                        paymentGatewayData: paymentIntent,
-                    },
+            try {
+                // Get the checkout session from payment intent
+                const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+                const sessions = await stripe.checkout.sessions.list({
+                    payment_intent: paymentIntent.id,
+                    limit: 1
                 });
 
-                console.log('✅ Payment updated:', paymentId);
+                if (sessions.data.length === 0) {
+                    console.error('❌ No checkout session found for payment intent:', paymentIntent.id);
+                    break;
+                }
 
-                // Update Participant payment status using composite unique key
-                await tx.participant.update({
-                    where: {
-                        userId_eventId: {
-                            userId: userId,
-                            eventId: eventId
+                const session = sessions.data[0];
+                const eventId = session.metadata?.eventId;
+                const userId = session.metadata?.userId;
+                const paymentId = session.metadata?.paymentId;
+
+                if (!eventId || !userId || !paymentId) {
+                    console.error('❌ Missing metadata in session:', session.metadata);
+                    break;
+                }
+
+                // Use transaction to update both Payment and Participant
+                await prisma.$transaction(async (tx) => {
+                    // Update Payment status
+                    await tx.payment.update({
+                        where: { id: paymentId },
+                        data: {
+                            paymentStatus: PaymentStatus.PAID,
+                            transactionId: paymentIntent.id,
+                            paymentGatewayData: paymentIntent,
+                        },
+                    });
+                    // Update Participant payment status using composite unique key
+                    await tx.participant.update({
+                        where: {
+                            userId_eventId: {
+                                userId: userId,
+                                eventId: eventId
+                            }
+                        },
+                        data: {
+                            paymentStatus: PaymentStatus.PAID,
                         }
-                    },
-                    data: {
-                        paymentStatus: PaymentStatus.PAID,
-                    }
+                    });
                 });
-
-                console.log('✅ Participant updated:', { userId, eventId });
-            });
-
-            console.log('✅ Transaction completed successfully');
+            } catch (error) {
+                console.error('❌ Error processing payment_intent.succeeded:', error);
+                throw error;
+            }
             break;
         }
 

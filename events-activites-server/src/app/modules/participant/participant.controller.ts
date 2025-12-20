@@ -9,7 +9,8 @@ import filterPick from "../../helpers/filterPick";
 const joinEvent = catchAsync(async (req: Request & { user?: IJWTPayload }, res: Response) => {
     const eventId = req.params.id
     const user = req.user;
-    const result = await ParticipantService.joinEvent(eventId, user as IJWTPayload);
+    const { couponCode } = req.body; // Get couponCode from request body
+    const result = await ParticipantService.joinEvent(eventId, user as IJWTPayload, couponCode);
 
     sendResponse(res, {
         statusCode: httpStatus.CREATED,

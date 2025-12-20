@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { stripe } from "../../helpers/stripe";
 import config from "../../../config";
 
-const joinEvent = async (eventId: string, user: IJWTPayload) => {
+const joinEvent = async (eventId: string, user: IJWTPayload, couponCode?: string) => {
     // Verify user exists and is active
     const userInfo = await prisma.user.findUniqueOrThrow({
         where: {
@@ -40,11 +40,12 @@ const joinEvent = async (eventId: string, user: IJWTPayload) => {
         throw new AppError(httpStatus.BAD_REQUEST, "Host cannot join their own event!");
     }
 
-    // Check if already joined
+    // Check if already joined with PAID status
     const alreadyJoined = await prisma.participant.findFirst({
         where: {
             userId: userInfo.id,
-            eventId: eventId
+            eventId: eventId,
+            paymentStatus: "PAID"
         }
     });
 
@@ -57,46 +58,134 @@ const joinEvent = async (eventId: string, user: IJWTPayload) => {
         throw new AppError(httpStatus.BAD_REQUEST, "Event is full!");
     }
 
+    // Calculate price with coupon if provided
+    let finalPrice = event.ticketPrice as number;
+    let originalPrice = event.ticketPrice as number;
+    let discountAmount = 0;
+    let appliedCouponCode: string | null = null;
+
+    if (couponCode && event.couponActive && event.couponCode) {
+        if (event.couponCode.toUpperCase() === couponCode.toUpperCase()) {
+            const discountPercent = event.couponDiscount || 0;
+            discountAmount = (originalPrice * discountPercent) / 100;
+            finalPrice = originalPrice - discountAmount;
+            appliedCouponCode = event.couponCode;
+        }
+    }
+
     // Use transaction to join event and update status if needed
     const result = await prisma.$transaction(async (tnx) => {
-        const participant = await tnx.participant.create({
-            data: {
+        // Check if participant already exists with UNPAID status
+        const existingParticipant = await tnx.participant.findFirst({
+            where: {
                 userId: userInfo.id,
-                eventId: eventId
-            },
-            include: {
-                user: {
-                    select: {
-                        id: true,
-                        email: true,
-                        fullName: true,
-                        profileImage: true
-                    }
-                },
-                event: {
-                    select: {
-                        id: true,
-                        name: true,
-                        type: true,
-                        location: true,
-                        startDate: true,
-                        endDate: true,
-                        ticketPrice: true
-                    }
-                }
+                eventId: eventId,
+                paymentStatus: "UNPAID"
             }
         });
 
+        let participant;
+        if (existingParticipant) {
+            // Update existing UNPAID participant with coupon info
+            participant = await tnx.participant.update({
+                where: { id: existingParticipant.id },
+                data: {
+                    couponApplied: appliedCouponCode ? true : false,
+                    couponCode: appliedCouponCode,
+                    originalPrice: appliedCouponCode ? originalPrice : null,
+                    discountAmount: appliedCouponCode ? parseFloat(discountAmount.toFixed(2)) : null,
+                    finalPrice: appliedCouponCode ? parseFloat(finalPrice.toFixed(2)) : null,
+                },
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            email: true,
+                            fullName: true,
+                            profileImage: true
+                        }
+                    },
+                    event: {
+                        select: {
+                            id: true,
+                            name: true,
+                            type: true,
+                            location: true,
+                            startDate: true,
+                            endDate: true,
+                            ticketPrice: true
+                        }
+                    }
+                }
+            });
+        } else {
+            // Create new participant with coupon info
+            participant = await tnx.participant.create({
+                data: {
+                    userId: userInfo.id,
+                    eventId: eventId,
+                    couponApplied: appliedCouponCode ? true : false,
+                    couponCode: appliedCouponCode,
+                    originalPrice: appliedCouponCode ? originalPrice : null,
+                    discountAmount: appliedCouponCode ? parseFloat(discountAmount.toFixed(2)) : null,
+                    finalPrice: appliedCouponCode ? parseFloat(finalPrice.toFixed(2)) : null,
+                },
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            email: true,
+                            fullName: true,
+                            profileImage: true
+                        }
+                    },
+                    event: {
+                        select: {
+                            id: true,
+                            name: true,
+                            type: true,
+                            location: true,
+                            startDate: true,
+                            endDate: true,
+                            ticketPrice: true
+                        }
+                    }
+                }
+            });
+        }
+
         const transactionId = uuidv4();
 
-        const paymentData = await tnx.payment.create({
-            data: {
+        // Check if payment already exists for this user and event
+        const existingPayment = await tnx.payment.findFirst({
+            where: {
                 userId: userInfo.id,
-                eventId,
-                amount: event.ticketPrice as number,
-                transactionId
+                eventId: eventId,
+                paymentStatus: "UNPAID"
             }
-        })
+        });
+
+        let paymentData;
+        if (existingPayment) {
+            // Update existing payment with new amount
+            paymentData = await tnx.payment.update({
+                where: { id: existingPayment.id },
+                data: {
+                    amount: finalPrice,
+                    transactionId
+                }
+            });
+        } else {
+            // Create new payment
+            paymentData = await tnx.payment.create({
+                data: {
+                    userId: userInfo.id,
+                    eventId,
+                    amount: finalPrice,
+                    transactionId
+                }
+            });
+        }
 
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
@@ -109,7 +198,7 @@ const joinEvent = async (eventId: string, user: IJWTPayload) => {
                         product_data: {
                             name: `Event In ${event.name}`,
                         },
-                        unit_amount: (event.ticketPrice as number) * 100,
+                        unit_amount: finalPrice * 100,
                     },
                     quantity: 1,
                 },

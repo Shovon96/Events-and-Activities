@@ -93,34 +93,8 @@ const applyCoupon = async (
   const discountAmount = (originalPrice * discountPercent) / 100;
   const finalPrice = originalPrice - discountAmount;
 
-  // Update participant record if coupon is applied
-  if (existingParticipant) {
-    await prisma.participant.update({
-      where: { id: existingParticipant.id },
-      data: {
-        couponApplied: true,
-        couponCode: event.couponCode,
-        originalPrice,
-        discountAmount: parseFloat(discountAmount.toFixed(2)),
-        finalPrice: parseFloat(finalPrice.toFixed(2)),
-      },
-    });
-  } else {
-    // If no participant record exists, create one with couponApplied = true
-    await prisma.participant.create({
-      data: {
-        userId: userInfo!.id,
-        eventId: event.id,
-        couponApplied: true,
-        couponCode: event.couponCode,
-        originalPrice,
-        discountAmount: parseFloat(discountAmount.toFixed(2)),
-        finalPrice: parseFloat(finalPrice.toFixed(2)),
-      },
-    });
-  }
-
-  // 9. Return success response
+  // 9. Return success response (DO NOT create/update participant here)
+  // Participant will be created in joinEvent with coupon info
   return {
     valid: true,
     message: "Coupon applied successfully",
