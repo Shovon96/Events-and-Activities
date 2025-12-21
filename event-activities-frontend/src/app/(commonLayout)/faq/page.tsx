@@ -1,8 +1,12 @@
 "use client";
 
+import { Metadata } from "next";
 import { useState } from "react";
 import { ChevronDown, HelpCircle, Users, Calendar, CreditCard, Shield } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+
+// Note: Metadata export doesn't work in client components, 
+// so we'll add it via layout or convert to server component with client wrapper
 
 interface FAQItem {
     question: string;

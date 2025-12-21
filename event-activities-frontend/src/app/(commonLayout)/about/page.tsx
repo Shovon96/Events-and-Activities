@@ -1,7 +1,26 @@
 export const dynamic = "force-dynamic";
+
+import { Metadata } from "next";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, Calendar, MapPin, Heart, Target, Zap, Shield, Award } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "About Us - Our Story & Mission | Eventora",
+  description: "Learn about Eventora's mission to connect people through amazing events. Discover our story, values, and the team behind the platform. Join our community of 1M+ active members.",
+  keywords: ["about eventora", "our story", "our mission", "event platform", "company values", "our team"],
+  openGraph: {
+    title: "About Us - Our Story & Mission | Eventora",
+    description: "Learn about Eventora's mission to connect people through amazing events. Join our community of 1M+ active members.",
+    type: "website",
+    url: "https://eventora.com/about",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Us - Our Story & Mission | Eventora",
+    description: "Learn about Eventora's mission to connect people through amazing events.",
+  },
+};
 
 export default function AboutPage() {
     return (

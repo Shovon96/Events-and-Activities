@@ -1,10 +1,28 @@
 export const dynamic = "force-dynamic";
+
+import { Metadata } from "next";
 import EventsFilter from "@/components/modules/events/EventsFilter";
 import EventCard from "@/components/shared/EventCard";
-import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
 import ManagementPagination from "@/components/shared/ManagementPagination";
 import { getUserInfo } from "@/lib/getUserSession";
 import { getCookie } from "@/service/auth.service";
+
+export const metadata: Metadata = {
+  title: "Browse Events - Find Your Next Experience | Eventora",
+  description: "Explore thousands of events happening near you. Filter by location, type, and date to find concerts, workshops, conferences, sports events, and more on Eventora.",
+  keywords: ["browse events", "find events", "event search", "local events", "upcoming events", "event categories", "event types"],
+  openGraph: {
+    title: "Browse Events - Find Your Next Experience | Eventora",
+    description: "Explore thousands of events happening near you. Filter by location, type, and date.",
+    type: "website",
+    url: "https://eventora.com/events",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Browse Events - Find Your Next Experience | Eventora",
+    description: "Explore thousands of events happening near you.",
+  },
+};
 
 interface SearchParams {
     searchTerm?: string;
