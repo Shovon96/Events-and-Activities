@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
+import EventsFilter from "@/components/modules/events/EventsFilter";
 import EventCard from "@/components/shared/EventCard";
-import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
 import { getUserInfo } from "@/lib/getUserSession";
 import { serverFetch } from "@/lib/serverFetch";
 import { getCookie } from "@/service/auth.service";
@@ -33,6 +33,14 @@ export default async function MyEventsPage() {
         }
     };
 
+    // Get unique locations from all events
+    const allLocations = formattedData?.data?.data?.map((event: any) => event.location) || [];
+    const uniqueLocations = [...new Set(allLocations)];
+
+    // Get unique event types from all events
+    const allTypes = formattedData?.data?.data?.map((event: any) => event.type) || [];
+    const uniqueTypes = [...new Set(allTypes)];
+
     return (
         <section className="max-w-7xl mx-auto px-4">
             <div className="py-8 text-center">
@@ -43,6 +51,11 @@ export default async function MyEventsPage() {
                 <p className="text-gray-600 mt-2 max-w-[500px] mx-auto">View and manage all the events you've joined.</p>
 
             </div>
+
+            <EventsFilter
+                locations={uniqueLocations}
+                types={uniqueTypes}
+            />
 
             {/* Results Count */}
             {events.length > 0 && (
