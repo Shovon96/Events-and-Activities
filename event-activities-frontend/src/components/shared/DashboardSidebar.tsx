@@ -124,8 +124,8 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
         role === "ADMIN"
             ? adminMenuItems
             : role === "HOST"
-            ? hostMenuItems
-            : userMenuItems;
+                ? hostMenuItems
+                : userMenuItems;
 
     const dashboardTitle = role === "ADMIN" ? "Admin" : role === "HOST" ? "Host" : "User";
 
@@ -192,7 +192,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
             </div>
 
             {/* Desktop Sidebar */}
-            <aside className="hidden lg:block w-64 bg-white border-r border-gray-200 min-h-screen sticky top-0">
+            <aside className="overflow-y-auto h-[calc(100vh-80px)] hidden lg:block w-64 bg-white border-r border-gray-200 min-h-screen sticky top-20">
                 <SidebarContent />
             </aside>
         </>
