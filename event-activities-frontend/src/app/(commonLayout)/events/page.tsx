@@ -4,6 +4,7 @@ import EventCard from "@/components/shared/EventCard";
 import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
 import ManagementPagination from "@/components/shared/ManagementPagination";
 import { getUserInfo } from "@/lib/getUserSession";
+import { getCookie } from "@/service/auth.service";
 
 interface SearchParams {
     searchTerm?: string;
@@ -20,6 +21,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
 
     const params = await searchParams;
     const user = await getUserInfo();
+    const token = await getCookie("accessToken");
 
     // Build query string from search params
     const queryParams = new URLSearchParams();
@@ -91,7 +93,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
 
             {/* Grid */}
             {events?.data?.data?.length > 0 ? (
-                <EventCard events={events} currentUser={user} />
+                <EventCard events={events} currentUser={user} token={token} />
             ) : (
                 <div className="py-20 text-center">
                     <p className="text-gray-500 text-lg">No events found</p>

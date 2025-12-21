@@ -240,8 +240,14 @@ export default function EventDetails({ data, currentUser, token }: EventDetailsP
     // Handle payments
     const handlePayment = async (eventId: string) => {
         try {
+
+            if (!token) {
+                toast.error("Authentication required. Please login.");
+                return;
+            }
+
             const payload: any = { eventId };
-            
+
             // Include coupon code if applied
             if (appliedDiscount) {
                 payload.couponCode = appliedDiscount.couponCode;
@@ -269,6 +275,7 @@ export default function EventDetails({ data, currentUser, token }: EventDetailsP
                 throw new Error(result?.error);
             }
 
+            toast.success("Redirecting to payment page....");
             window.location.href = result?.data?.paymentUrl
 
         } catch (error) {

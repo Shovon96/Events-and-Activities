@@ -10,6 +10,7 @@ import Link from "next/link";
 import DeleteConfirmationDialog from "@/components/modals/DeleteConfirmationDialog";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Button } from "../ui/button";
 
 interface IEventApiResponse {
     data: {
@@ -46,6 +47,48 @@ export default function EventCardClient({ events, currentUser, token }: EventCar
             (p: any) => p.userId === currentUserId && p.paymentStatus === "PAID"
         );
     };
+
+    // Handle Join Now button click
+    const handlePayment = async (eventId: string) => {
+        try {
+
+            if (!token) {
+                toast.error("Authentication required. Please login.");
+                return;
+            }
+
+            const payload: any = { eventId };
+
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}/join`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                    authorization: token as string
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const result = await res.json();
+
+            if (!result?.data?.paymentUrl) {
+                toast.error("Payment URL not found try gain 2min later");
+                throw new Error("Payment URL not found");
+            }
+
+            if (result?.error) {
+                toast.error(result?.error);
+                throw new Error(result?.error);
+            }
+
+            toast.success("Redirecting to payment page....");
+            window.location.href = result?.data?.paymentUrl
+
+        } catch (error) {
+            console.error("Payment error:", error);
+        }
+    };
+
 
     const handleLeaveClick = (event: any) => {
         setSelectedEvent(event);
@@ -159,12 +202,12 @@ export default function EventCardClient({ events, currentUser, token }: EventCar
                                             Leave Event
                                         </button>
                                     ) : (
-                                        <Link
-                                            href={`/events/${event.id}`}
-                                            className="text-white border border-primary bg-primary hover:bg-white hover:text-primary inline-block px-4 py-2 rounded-md text-sm font-semibold transition-colors duration-300 w-1/2 text-center"
+                                        <Button
+                                            onClick={() => handlePayment(event.id as string)}
+                                            className="text-white border cursor-pointer border-primary bg-primary hover:bg-white hover:text-primary inline-block px-4 py-2 rounded-md text-sm font-semibold transition-colors duration-300 w-1/2 text-center"
                                         >
-                                            Book Now
-                                        </Link>
+                                            Join Now
+                                        </Button>
                                     )}
                                 </div>
                             </CardContent>
