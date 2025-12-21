@@ -7,6 +7,8 @@ import Testimonials from "@/components/modules/Home/Testimonials";
 import TopRatedHosts from "@/components/modules/Home/TopRatedHost";
 import WhyChooseEventora from "@/components/modules/Home/WhyChooseEventora";
 import Head from "next/head";
+import { Suspense } from "react";
+import HomeEventsSkeleton from "@/components/shared/skeletons/HomeEventsSkeleton";
 
 export default function Home() {
   return (
@@ -23,7 +25,9 @@ export default function Home() {
       <main>
         <HomeHero />
         <HowIsWork />
-        <PopularEvents />
+        <Suspense fallback={<HomeEventsSkeleton />}>
+          <PopularEvents />
+        </Suspense>
         <EventCategories />
         <TopRatedHosts />
         <WhyChooseEventora />
