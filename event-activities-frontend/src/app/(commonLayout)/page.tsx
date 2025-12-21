@@ -10,6 +10,7 @@ import TopRatedHosts from "@/components/modules/Home/TopRatedHost";
 import WhyChooseEventora from "@/components/modules/Home/WhyChooseEventora";
 import { Suspense } from "react";
 import HomeEventsSkeleton from "@/components/shared/skeletons/HomeEventsSkeleton";
+import { getUserInfo } from "@/lib/getUserSession";
 
 export const metadata: Metadata = {
   title: "Eventora - Discover & Book Amazing Events Near You",
@@ -34,10 +35,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default async function Home() {
+
+  const user = await getUserInfo();
+
   return (
     <main>
-      <HomeHero />
+      <HomeHero user={user} />
       <HowIsWork />
       <Suspense fallback={<HomeEventsSkeleton />}>
         <PopularEvents />

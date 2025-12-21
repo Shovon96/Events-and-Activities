@@ -49,7 +49,7 @@ const heroSlides = [
     },
 ];
 
-export default function HomeHero() {
+export default function HomeHero({ user }: { user: any }) {
     const [api, setApi] = React.useState<CarouselApi>();
     const [current, setCurrent] = React.useState(0);
 
@@ -123,14 +123,44 @@ export default function HomeHero() {
                                                     Explore Events
                                                 </Button>
                                             </Link>
-                                            <Link href="/become-host">
-                                                <Button
-                                                    variant="outline"
-                                                    className="w-full sm:w-auto px-8 py-6 bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white/20 text-white hover:text-white font-semibold text-lg rounded-lg transition-all duration-300 cursor-pointer"
-                                                >
-                                                    Become a Host
-                                                </Button>
-                                            </Link>
+                                            {user?.role === 'USER' ? (
+                                                <Link href="/my-events">
+                                                    <Button
+                                                        variant="outline"
+                                                        className="w-full sm:w-auto px-8 py-6 bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white/20 text-white hover:text-white font-semibold text-lg rounded-lg transition-all duration-300 cursor-pointer"
+                                                    >
+                                                        My Events
+                                                    </Button>
+                                                </Link>
+                                            ) : user?.role === 'HOST' ? (
+                                                <Link href="/hosted-events">
+                                                    <Button
+                                                        variant="outline"
+                                                        className="w-full sm:w-auto px-8 py-6 bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white/20 text-white hover:text-white font-semibold text-lg rounded-lg transition-all duration-300 cursor-pointer"
+                                                    >
+                                                        Hosted Events
+                                                    </Button>
+                                                </Link>
+                                            ) : user?.role === 'ADMIN' ? (
+                                                <Link href="/admin/dashboard">
+                                                    <Button
+                                                        variant="outline"
+                                                        className="w-full sm:w-auto px-8 py-6 bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white/20 text-white hover:text-white font-semibold text-lg rounded-lg transition-all duration-300 cursor-pointer"
+                                                    >
+                                                        Admin Dashboard
+                                                    </Button>
+                                                </Link>
+                                            ) : (
+                                                <Link href="/become-host">
+                                                    <Button
+                                                        variant="outline"
+                                                        className="w-full sm:w-auto px-8 py-6 bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white/20 text-white hover:text-white font-semibold text-lg rounded-lg transition-all duration-300 cursor-pointer"
+                                                    >
+                                                        Become a Host
+                                                    </Button>
+                                                </Link>
+                                            )
+                                            }
                                         </div>
 
                                         {/* Stats */}
@@ -161,8 +191,8 @@ export default function HomeHero() {
                             key={index}
                             onClick={() => api?.scrollTo(index)}
                             className={`transition-all duration-300 rounded-full ${current === index
-                                    ? "w-8 h-2 bg-white"
-                                    : "w-2 h-2 bg-white/50 hover:bg-white/75"
+                                ? "w-8 h-2 bg-white"
+                                : "w-2 h-2 bg-white/50 hover:bg-white/75"
                                 }`}
                             aria-label={`Go to slide ${index + 1}`}
                         />
