@@ -1,11 +1,11 @@
 export const dynamic = "force-dynamic";
 import EventCard from "@/components/shared/EventCard";
-import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
 import { serverFetch } from "@/lib/serverFetch";
 import EventsFilter from "@/components/modules/events/EventsFilter";
 import { getUserInfo } from "@/lib/getUserSession";
 import { redirect } from "next/navigation";
 import { getCookie } from "@/service/auth.service";
+import Link from "next/link";
 
 interface SearchParams {
     searchTerm?: string;
@@ -107,11 +107,12 @@ export default async function HostedEventsPage({ searchParams }: { searchParams:
 
     return (
         <section className="max-w-7xl mx-auto px-4">
-            <div className="py-6 flex justify-center text-center">
-                <ManagementPageHeader
-                    title="My Hosted Events"
-                    description="View and manage your hosted events here. You can create, update, and delete events as needed."
-                />
+            <div className="py-6 text-center">
+                {/* Heading */}
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+                    My <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">Hosted Events</span>
+                </h2>
+                <p className="text-gray-600 mt-2 max-w-[500px] mx-auto">View and manage your hosted events here. You can create, update, and delete events as needed.</p>
             </div>
 
             <EventsFilter
@@ -129,7 +130,7 @@ export default async function HostedEventsPage({ searchParams }: { searchParams:
 
             {/* Grid */}
             {paginatedEvents.length > 0 ? (
-                <EventCard events={formattedData} currentUser={user} token={token}/>
+                <EventCard events={formattedData} currentUser={user} token={token} />
             ) : (
                 <div className="py-20 text-center">
                     <p className="text-gray-500 text-lg">No events found</p>
@@ -138,6 +139,40 @@ export default async function HostedEventsPage({ searchParams }: { searchParams:
                             ? "Try adjusting your filters"
                             : "You haven't created any events yet"}
                     </p>
+                </div>
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div className="py-6 flex justify-center space-x-2">
+                    {Array.from({ length: totalPages }).map((_, index) => {
+                        const pageNum = index + 1;
+                        const isActive = pageNum === page;
+
+                        // Preserve all existing query parameters
+                        const queryParams = new URLSearchParams();
+                        if (params.searchTerm) queryParams.set("searchTerm", params.searchTerm);
+                        if (params.status) queryParams.set("status", params.status);
+                        if (params.location) queryParams.set("location", params.location);
+                        if (params.type) queryParams.set("type", params.type);
+                        if (params.sortBy) queryParams.set("sortBy", params.sortBy);
+                        if (params.sortOrder) queryParams.set("sortOrder", params.sortOrder);
+                        if (params.limit) queryParams.set("limit", params.limit);
+                        queryParams.set("page", pageNum.toString());
+
+                        return (
+                            <Link
+                                key={pageNum}
+                                href={`?${queryParams.toString()}`}
+                                className={`px-4 py-2 rounded-md text-sm font-medium ${isActive
+                                    ? "bg-purple-600 text-white"
+                                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                    }`}
+                            >
+                                {pageNum}
+                            </Link>
+                        );
+                    })}
                 </div>
             )}
         </section>
