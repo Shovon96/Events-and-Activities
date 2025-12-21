@@ -1,5 +1,6 @@
-import { Music, Trophy, Palette, Utensils, Cpu, Heart, Users, BookOpen } from "lucide-react";
+import { Music, Trophy, Palette, Utensils, Cpu, Heart, Users, BookOpen, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const categories = [
     {
@@ -104,6 +105,17 @@ export default function EventCategories() {
                         </div>
                     );
                 })}
+            </div>
+
+            {/* Bottom CTA */}
+            <div className="mt-16 text-center">
+                <Link
+                    href="/events"
+                    className="inline-flex items-center gap-2 bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                    <Search className="w-5 h-5" />
+                    Start Exploring Events
+                </Link>
             </div>
         </section>
     );
