@@ -35,7 +35,7 @@ export default function UserDashboardLoading() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 3 }).map((_, index) => (
               <div key={index} className="p-4 border rounded-lg space-y-3">
-                <Skeleton className="h-10 w-10 rounded-full" />
+                {/* <Skeleton className="h-10 w-10 rounded-full" /> */}
                 <Skeleton className="h-5 w-32" />
                 <Skeleton className="h-3 w-full" />
               </div>
