@@ -10,6 +10,7 @@ import { loginValidationZodSchema } from "@/zodValidations/auth.validation";
 import { useRouter } from "next/navigation";
 import { loginUser } from "@/service/loginUser";
 import { toast } from "sonner";
+import Link from "next/link";
 
 export interface ILoginInput {
     email: string;
@@ -26,6 +27,29 @@ export default function LoginForm() {
     const [error, setError] = useState<string>("");
     const [success, setSuccess] = useState<string>("");
     const router = useRouter();
+
+    // Demo credentials
+    const demoCredentials = {
+        user: {
+            email: "eventora@user.com",
+            password: "EventoraPass",
+        },
+        host: {
+            email: "eventora@host.com",
+            password: "EventoraPass",
+        },
+        admin: {
+            email: "eventora@admin.com",
+            password: "EventoraPass",
+        },
+    };
+    // Function to fill demo credentials
+    const fillDemoCredentials = (role: "user" | "host" | "admin") => {
+        setForm({
+            email: demoCredentials[role].email,
+            password: demoCredentials[role].password,
+        });
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -93,7 +117,7 @@ export default function LoginForm() {
         <div className="w-full lg:w-3/5 flex items-center justify-center p-6 lg:p-12">
             <Card className="w-full max-w-xl shadow-lg rounded-3xl border-0">
                 <CardContent className="p-8">
-                    <h2 className="text-4xl font-bold mb-2 text-center text-secondary">Welcome back</h2>
+                    <h2 className="text-transparent text-4xl font-bold mb-2 text-center bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">Welcome Back</h2>
                     <p className="text-gray-500 text-sm mb-8 text-center">Sign in to continue to your account</p>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -155,10 +179,35 @@ export default function LoginForm() {
                         </div>
 
                         {/* Forgot Password Link */}
-                        <div className="flex justify-end">
-                            <a href="/forgot-password" className="text-sm text-secondary hover:underline font-medium">
+                        <div className="flex justify-between">
+                            {/* Login with */}
+                            <div className="flex items-center justify-start gap-2">
+                                <span className="text-sm">Login With: </span>
+                                <button
+                                    type="button"
+                                    onClick={() => fillDemoCredentials("user")}
+                                    className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 text-sm cursor-pointer px-3 py-1 border border-purple-300 rounded-lg transition-all duration-200 font-medium"
+                                >
+                                    User
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => fillDemoCredentials("host")}
+                                    className="text-green-600 hover:text-green-700 hover:bg-green-50 text-sm cursor-pointer px-3 py-1 border border-green-300 rounded-lg transition-all duration-200 font-medium"
+                                >
+                                    Host
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => fillDemoCredentials("admin")}
+                                    className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 text-sm cursor-pointer px-3 py-1 border border-blue-300 rounded-lg transition-all duration-200 font-medium"
+                                >
+                                    Admin
+                                </button>
+                            </div>
+                            <Link href="/#forgot-password" className="text-sm text-secondary hover:underline font-medium">
                                 Forgot password?
-                            </a>
+                            </Link>
                         </div>
 
                         {/* Submit Button */}

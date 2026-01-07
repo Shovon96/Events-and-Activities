@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 import LoginForm from "@/components/modules/auth/LoginForm";
-import favicon from "@/app/favicon.ico"
+import logoImage from "@/assets/images/eventora-login-logo.png"
 import Image from "next/image";
 
 const LoginPage = () => {
@@ -8,26 +8,40 @@ const LoginPage = () => {
         <>
             <div className="flex min-h-screen bg-gray-50">
                 {/* Left Section - Purple Branding */}
-                <div className="hidden lg:flex w-2/5 bg-linear-to-b from-primary via-primary/90 to-secondary flex-col justify-between p-12 text-white">
-                    <div>
-                        {/* logo */}
-                        <div className="flex items-center gap-2 py-3">
-                            <Image height={50} width={50} src={favicon} alt="Eventora" />
-                            <h1 className="text-4xl font-bold italic leading-tight">Eventora</h1>
+                {/* Left Branding Section */}
+                <div className="relative hidden lg:flex flex-col justify-between px-14 py-12 text-white 
+                      bg-linear-to-br from-primary via-primary/90 to-secondary">
+
+                    {/* Decorative overlay */}
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.15),transparent_60%)]" />
+
+                    <div className="relative z-10">
+                        {/* Logo */}
+                        <div className="mb-12">
+                            <Image
+                                src={logoImage}
+                                alt="Eventora"
+                                height={60}
+                                width={220}
+                                priority
+                            />
                         </div>
-                        <h1 className="text-4xl font-bold mb-4 leading-tight">Welcome back to your event journey</h1>
-                        <p className="text-purple-100 mb-8">Continue exploring amazing events and connecting with your community. Your next adventure awaits!</p>
-                        {/* login creadentials card */}
-                        <div className="bg-black/40 shadow-lg p-4 rounded-md">
-                            <p><strong>User:</strong> eventora@user.com</p>
-                            <p><strong>Host:</strong> eventora@host.com</p>
-                            <p><strong>Admin:</strong> eventora@admin.com</p>
-                            <p><strong>All Pass:</strong> EventoraPass</p>
-                        </div>
+
+                        {/* Headline */}
+                        <h1 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
+                            Welcome back to <br /> Eventora
+                        </h1>
+
+                        <p className="text-purple-100 max-w-md text-lg">
+                            Discover events, manage your experiences, and stay connected with
+                            your community — all in one place.
+                        </p>
                     </div>
 
-                    {/* Login Creadentials */}
-
+                    {/* Footer */}
+                    <p className="relative z-10 text-sm text-purple-200">
+                        © {new Date().getFullYear()} Eventora. All rights reserved.
+                    </p>
                 </div>
 
                 {/* Right Section - Form */}
