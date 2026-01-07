@@ -1,22 +1,39 @@
 export const dynamic = "force-dynamic";
 import SignupForm from "@/components/modules/auth/SignupForm";
-import favicon from "@/app/favicon.ico"
+import logoImage from "@/assets/images/eventora-login-logo.png"
 import Image from "next/image";
 
 const RegisterPage = () => {
     return (
         <>
             <div className="flex min-h-screen bg-gray-50">
-                {/* Left Section - Purple Branding */}
-                <div className="hidden lg:flex w-2/5 bg-linear-to-b from-primary via-primary/90 to-secondary flex-col justify-between p-12 text-white">
-                    <div>
-                        {/* logo */}
-                        <div className="flex items-center gap-2 py-3">
-                            <Image height={50} width={50} src={favicon} alt="Eventora" />
-                            <h1 className="text-4xl font-bold italic leading-tight">Eventora</h1>
+                {/* Left Branding Section */}
+                <div className="relative hidden lg:flex flex-col justify-between px-14 py-12 text-white 
+                      bg-linear-to-br from-primary via-primary/90 to-secondary w-1/2">
+
+                    {/* Decorative overlay */}
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.15),transparent_60%)]" />
+
+                    <div className="relative z-10">
+                        {/* Logo */}
+                        <div className="mb-12">
+                            <Image
+                                src={logoImage}
+                                alt="Eventora"
+                                height={60}
+                                width={220}
+                                priority
+                            />
                         </div>
-                        <h1 className="text-4xl font-bold mb-4 leading-tight">Discover events that match your passion</h1>
-                        <p className="text-purple-100 mb-8">Join thousands of event enthusiasts. Find, attend, and create memorable experiences in your community.</p>
+
+                        {/* Headline */}
+                        <h1 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
+                            Discover events that match your passion
+                        </h1>
+
+                        <p className="text-purple-100 max-w-md text-lg">
+                            Join thousands of event enthusiasts. Find, attend, and create memorable experiences in your community.
+                        </p>
                     </div>
 
                     <div>
@@ -44,7 +61,7 @@ const RegisterPage = () => {
                 </div>
 
                 {/* Right Section - Form */}
-                <SignupForm 
+                <SignupForm
                     role="USER"
                     title="Create your account"
                     subtitle="Start discovering amazing events near you"

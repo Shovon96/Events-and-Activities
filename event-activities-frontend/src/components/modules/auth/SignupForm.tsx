@@ -169,7 +169,7 @@ export default function SignupForm({
         <div className="w-full lg:w-3/5 flex items-center justify-center p-6 lg:p-12">
             <Card className="w-full max-w-xl shadow-lg rounded-3xl border-0">
                 <CardContent className="p-8">
-                    <h2 className="text-4xl font-bold mb-2 text-center text-secondary">{title}</h2>
+                    <h2 className="text-transparent text-4xl font-bold mb-2 text-center bg-clip-text bg-linear-to-r from-purple-600 to-pink-600">{title}</h2>
                     <p className="text-gray-500 text-sm mb-8 text-center">{subtitle}</p>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
