@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import CommonLogo from "./CommonLogo";
 import ProfileMenu from "./ProfileMenu";
 import MobileMenu from "./MobileMenu";
+import NotifyMenu from "./NotifyMenu";
 
 type UserRole = "GUEST" | "USER" | "HOST" | "ADMIN";
 
@@ -35,6 +36,7 @@ export function Navbar({ userInfo, role }: NavbarProps) {
         Contact
       </NavLink>
 
+      <NotifyMenu />
       <div className="flex items-center gap-2">
         <Button variant="default" asChild>
           <Link href="/login">Login</Link>
@@ -63,6 +65,8 @@ export function Navbar({ userInfo, role }: NavbarProps) {
       <NavLink href="/contact" pathname={pathname}>
         Contact
       </NavLink>
+
+      <NotifyMenu />
       <div className="flex items-center gap-3">
         <ProfileMenu user={userInfo} />
       </div>
@@ -89,6 +93,8 @@ export function Navbar({ userInfo, role }: NavbarProps) {
       <NavLink href="/contact" pathname={pathname}>
         Contact
       </NavLink>
+
+      <NotifyMenu />
       <div className="flex items-center gap-3">
         <ProfileMenu user={userInfo} />
       </div>
@@ -121,6 +127,8 @@ export function Navbar({ userInfo, role }: NavbarProps) {
       <NavLink href="/contact" pathname={pathname}>
         Contact
       </NavLink>
+
+      <NotifyMenu />
       <div className="flex items-center gap-3">
         <ProfileMenu user={userInfo} />
       </div>
