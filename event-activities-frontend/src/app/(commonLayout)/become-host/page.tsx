@@ -1,29 +1,44 @@
 export const dynamic = "force-dynamic";
 import SignupForm from "@/components/modules/auth/SignupForm";
-import favicon from "@/app/favicon.ico";
+import logoImage from "@/assets/images/eventora-login-logo.png"
 import Image from "next/image";
 
 export default function BecomeHostPage() {
     return (
         <div className="flex min-h-screen bg-gray-50">
-            
+
             {/* Left Section - Form */}
-            <SignupForm 
+            <SignupForm
                 role="HOST"
                 title="Become a Host"
                 subtitle="Start creating and managing your own events"
             />
 
             {/* Right Section - Host Branding */}
-            <div className="hidden lg:flex w-2/5 bg-linear-to-b from-orange-600 via-orange-500 to-pink-600 flex-col justify-between p-12 text-white">
-                <div>
-                    {/* logo */}
-                    <div className="flex items-center gap-2 py-3">
-                        <Image height={50} width={50} src={favicon} alt="Eventora" />
-                        <h1 className="text-4xl font-bold italic leading-tight">Eventora</h1>
+            <div className="relative hidden lg:flex flex-col justify-between px-14 py-12 text-white 
+                      bg-linear-to-br from-primary via-primary/90 to-secondary">
+
+                {/* Decorative overlay */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.15),transparent_60%)]" />
+
+                <div className="relative z-10">
+                    {/* Logo */}
+                    <div className="mb-12">
+                        <Image
+                            src={logoImage}
+                            alt="Eventora"
+                            height={60}
+                            width={220}
+                            priority
+                        />
                     </div>
-                    <h1 className="text-4xl font-bold mb-4 leading-tight">Become an Event Host</h1>
-                    <p className="text-orange-100 mb-8">
+
+                    {/* Headline */}
+                    <h1 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
+                        Become an Event Host
+                    </h1>
+
+                    <p className="text-purple-100 max-w-md text-lg">
                         Create and manage amazing events. Build your community and share your passion with thousands of attendees.
                     </p>
                 </div>
